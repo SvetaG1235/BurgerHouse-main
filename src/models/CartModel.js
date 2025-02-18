@@ -9,11 +9,19 @@ const CartModels = sequelizeDB.define("Cart", {
         allowNull: false
     },
 
-    total_price: {
-        type: Sequlize.INTEGER,
-        allowNull: false
-    }
-    
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      productId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      }
 })
 
 export default CartModels
