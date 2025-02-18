@@ -1,7 +1,7 @@
-import sequelizeDB from "../dishesDB.js";
+import sequelizeDB from "../db.js";
 import {Sequelize} from "sequelize";
 
-const DishesModels = sequelizeDB.define("Dishes", {
+const DishesModels = sequelizeDB.define("Dish", {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -17,7 +17,7 @@ const DishesModels = sequelizeDB.define("Dishes", {
         allowNull: false
     },
     price: {
-        type: Sequlize.INTEGER,
+        type: Sequlize.FLOAT,
         allowNull: false
     }
     

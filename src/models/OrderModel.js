@@ -1,4 +1,4 @@
-import sequelizeDB from "../orderDB.js";
+import sequelizeDB from "../db.js";
 import {Sequelize} from "sequelize";
 
 const OrderModels = sequelizeDB.define("Order", {
