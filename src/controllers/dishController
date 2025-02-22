@@ -1,0 +1,11 @@
+import DishesModels from '../models/DishModel.js';
+
+export const getDishes = async (req, res) => {
+    try {
+        const dishes = await DishesModels.findAll();
+        res.render('dishes', { dishes }); // Передаем данные в шаблон
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Ошибка сервера');
+    }
+};
