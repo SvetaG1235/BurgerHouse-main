@@ -10,7 +10,7 @@
     <div class="main">
         <div class="upline">
             <div>
-                <!-- Ваш контент -->
+             
             </div>
             <div>
                 <button id="menu_button">Menu</button>
@@ -24,45 +24,21 @@
         </div>
 
         <div class="maintext">
-
+            <h1>Меню</h1>
         </div>
 
         <div class="switchmenu">
-            <div class="meats">
-
-            </div>
+         {{#each dishes}}
             <div class="burgers">
-
+                <h2>{{this.dish_category}}</h2>
+                <p>Калории: {{this.calories}}</p>
+                <p>Цена: {{this.price}}$</p>
             </div>
-            <div class="burgers">
-
-            </div>
-            <div class="burgers">
-
-            </div>
-            <div class="burgers">
-
-            </div>
-            <div class="burgers">
-
-            </div>
-            <div class="burgers">
-
-            </div>
-            <div class="burgers">
-
-            </div>
-            <div class="burgers">
-
-            </div>
-            <div class="burgers">
-
-            </div>
-            
+            {{/each}}
         </div>
 
         <div class="stillmenu">
-            <div class="">
+            <div>
 
             </div>
         </div>
@@ -71,18 +47,19 @@
 </body>
 <script>
     document.getElementById('menu_button').addEventListener('click', function() {
-    var dropdownMenu = document.getElementById('dropdownMenu');
-    dropdownMenu.classList.toggle('show');
-});
+        var dropdownMenu = document.getElementById('dropdownMenu');
+        dropdownMenu.classList.toggle('show');
+    });
     window.onclick = function(event) {
-    var dropdownMenu = document.getElementById('dropdownMenu');
-    var menuButton = document.getElementById('menu_button');
+        var dropdownMenu = document.getElementById('dropdownMenu');
+        var menuButton = document.getElementById('menu_button');
 
-    if (!event.target.matches('#menu_button') && !event.target.closest('.dropdown-menu')) {
-        dropdownMenu.classList.remove('show');
-        menuButton.style.opacity = 1; 
-        menuButton.style.pointerEvents = 'auto'; 
-    }
-}
+        if (!event.target.matches('#menu_button') && !event.target.closest('.dropdown-menu')) {
+            dropdownMenu.classList.remove('show');
+            menuButton.style.opacity = 1; 
+            menuButton.style.pointerEvents = 'auto'; 
+        }
+    };
+
 </script>
 </html>
