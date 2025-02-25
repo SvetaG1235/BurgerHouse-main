@@ -1,3 +1,4 @@
+
 :root {
     --main-color: rgb(28, 27, 23);
     --white: rgb(254, 254, 252);
@@ -11,53 +12,58 @@ html, body {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .main {
     display: grid;
     width: 100%;
     height: 100vh;
-    background-color: black; 
-    justify-items: center; 
-    align-items: center; 
+    background-color: var(--main-color);
+    justify-items: center;
+    align-items: center;
 }
 
 .forms {
-    text-align: center; 
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .form-group {
-    margin-bottom: 20px; 
+    margin: 20px 0; 
 }
 
-.form-control {
-    height: 80px;
+.form-control, .register-form-control {
+    height: 60px; 
     width: 500px;
     background-color: var(--yellow);
-    color: var(--white);
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-size: 25px;
-    border: none;
-    border-radius: 5px; 
-    padding: 0 10px; 
-}
-
-.register-form-control {
-    height: 80px;
-    width: 500px;
-    background-color: var(--yellow);
-    color: var(--white);
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-size: 25px;
+    color: var(--main-color);
+    font-size: 20px; 
     border: none; 
-    border-radius: 5px;
-    padding: 0 10px; 
+    border-radius: 5px; 
+    padding: 0 15px; 
+}
+
+.form-control:hover, .register-form-control:hover {
+    background-color: rgba(255, 205, 10, 0.8); 
 }
 
 button {
     cursor: pointer; 
 }
 
+p {
+    color: var(--white);
+    font-size: 18px; 
+}
+
 a {
-    color: var(--yellow); 
+    color: var(--yellow);
+    text-decoration: none; 
+}
+
+a:hover {
+    text-decoration: underline; 
 }
