@@ -30,6 +30,7 @@ class UserServices {
         }
     }
 
+    
 }
 const UserService = new UserServices()
 export default  UserService

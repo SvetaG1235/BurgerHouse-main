@@ -7,9 +7,10 @@ import indexRouter from './routes/index.js'
 import usersRouter from './routes/users.js'
 import registerRouter from './routes/register.js'
 import cartRouter from './routes/cart.js'
-import dishesRouter from './routes/dishes.js';
+import dishesRouter from './routes/dishes.js'
+import adminRouter from "./routes/admin.js";
 
-const app = express();
+export const app = express();
 const __dirname = path.resolve()
 app.use(logger('dev'));
 app.use(express.json());
@@ -23,7 +24,7 @@ app.use('/users', usersRouter);
 app.use('/auth', registerRouter);
 app.use('/cart', cartRouter);
 app.use('/dishes', dishesRouter);
-
+app.use('/admin', adminRouter);
 
 try{
     sequelizeDB.sync()

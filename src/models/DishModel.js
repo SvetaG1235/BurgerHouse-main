@@ -1,26 +1,34 @@
 import sequelizeDB from "../db.js";
 import {Sequelize} from "sequelize";
+import { DataTypes } from "sequelize";
+import { app } from "../app.js";
 
-const DishesModels = sequelizeDB.define("Dish", {
+const Dish = sequelizeDB.define("Dish", {
     id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false
+        autoIncrement: true, 
+    },
+    name: {
+        type: DataTypes.STRING, 
+        allowNull: false,
     },
     dish_category: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     calories: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
     price: {
-        type: Sequlize.FLOAT,
-        allowNull: false
-    }
-    
-})
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT, 
+        allowNull: false,
+    },
+});
+export default Dish
 
-export default DishesModels

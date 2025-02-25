@@ -15,6 +15,10 @@ const UsersModels = sequelizeDB.define("Users", {
     age: {
         type: Sequelize.INTEGER,
         allowNull: false
+    },
+    role: {
+        value: Sequelize.INTEGER,
+        allowNull: false
     }
 })
 

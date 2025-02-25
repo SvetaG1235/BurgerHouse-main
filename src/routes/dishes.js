@@ -4,12 +4,12 @@ import DishService from '../services/DishService.js';
 const router = express.Router();
 
 // Получение всех блюд
-router.get('/', async (req, res) => {
+app.get("/dishes", async (req, res) => {
     try {
-        const dishes = await DishService.getAllDishes();
-        res.json(dishes);
-    } catch (e) {
-        res.status(500).json({ error: e.message });
+        const dishes = await Dish.findAll(); // Получаем все блюда из базы
+        res.json(dishes); // Отправляем их клиенту
+    } catch (error) {
+        res.status(500).json({ error: "Ошибка при получении блюд" });
     }
 });
 
