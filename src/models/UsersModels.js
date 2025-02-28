@@ -1,6 +1,7 @@
 import sequelizeDB from "../db.js";
 import {Sequelize} from "sequelize";
 
+
 const UsersModels = sequelizeDB.define("Users", {
     id: {
         type: Sequelize.INTEGER,
@@ -17,9 +18,18 @@ const UsersModels = sequelizeDB.define("Users", {
         allowNull: false
     },
     role: {
-        value: Sequelize.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: false
-    }
+    },
+    username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
 })
 
 export default UsersModels
