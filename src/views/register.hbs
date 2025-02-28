@@ -3,34 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="../register_style.css">
+    <link rel="stylesheet" href="../register_style.css">
     <title>Регистрация</title>
 </head>
 <body>
     <div class="main">
         <div class="forms">
             <h2>Регистрация</h2>
-            <form id="registerForm">
-                <div class="form-group">
-                    <input type="text" class="register-form-control" name="fio" placeholder="Введите ФИО пользователя" required>
-                </div>
-                <div class="form-group">
-                    <input type="tel" class="register-form-control" name="phone" placeholder="Введите номер телефона" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" class="register-form-control" name="email" placeholder="Введите ваш email" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="register-form-control" name="username" placeholder="Введите имя пользователя (логин)" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="register-form-control" name="password" placeholder="Введите пароль" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="register-form-control" name="confirmPassword" placeholder="Подтвердите пароль" required>
-                </div>
-                <button type="submit" class="register-form-control">Зарегистрироваться</button>
-            </form>
+            <form id="registerForm" method="POST" action="/register">
+    <div class="form-group">
+        <input type="text" class="register-form-control" name="name" placeholder="Введите ФИО пользователя" required>
+    </div>
+    <div class="form-group">
+        <input type="tel" class="register-form-control" name="phone" placeholder="Введите номер телефона" required>
+    </div>
+    <div class="form-group">
+        <input type="email" class="register-form-control" name="email" placeholder="Введите ваш email" required>
+    </div>
+    <div class="form-group">
+        <input type="text" class="register-form-control" name="username" placeholder="Введите имя пользователя (логин)" required>
+    </div>
+    <div class="form-group">
+        <input type="password" class="register-form-control" name="password" placeholder="Введите пароль" required>
+    </div>
+    <div class="form-group">
+        <input type="password" class="register-form-control" name="confirmPassword" placeholder="Подтвердите пароль" required>
+    </div>
+    <div class="form-group">
+        <input type="number" class="register-form-control" name="age" placeholder="Введите ваш возраст" required>
+    </div>
+    <div class="form-group">
+        <select name="role" class="register-form-control" required>
+            <option value="1">Пользователь</option>
+            <option value="2">Администратор</option>
+            <!-- Добавьте другие роли по необходимости -->
+        </select>
+    </div>
+    <button type="submit" class="register-form-control">Зарегистрироваться</button>
+</form>
             <p>Уже есть аккаунт? <a href="enter">Войти</a></p>
         </div>
     </div>
