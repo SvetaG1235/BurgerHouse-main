@@ -13,13 +13,13 @@ const UsersModels = sequelizeDB.define("Users", {
         type: Sequelize.STRING,
         allowNull: false
     },
-    age: {
-        type: Sequelize.INTEGER,
+    phone: {
+        type: Sequelize.STRING, 
         allowNull: false
     },
-    role: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+    email: {
+        type: Sequelize.STRING, 
+        allowNull: false,
     },
     username: {
         type: Sequelize.STRING,
@@ -30,6 +30,14 @@ const UsersModels = sequelizeDB.define("Users", {
         type: Sequelize.STRING,
         allowNull: false,
     },
+    role: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    age: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }
 })
 
 export default UsersModels
