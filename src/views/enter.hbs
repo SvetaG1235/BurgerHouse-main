@@ -26,7 +26,38 @@
             <p>Нет аккаунта? <a href="register">Зарегистрироваться</a></p>
         </div>
     </div>
+     <script>
+    
+       document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
 
+    const formData = new FormData(event.target);
+    const username = formData.get('username');
+    const password = formData.get('password');
+
+    try {
+        const response = await fetch('/auth/enter', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('Вход выполнен успешно!');
+            window.location.href = '/';
+        } else {
+            alert('Ошибка: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Ошибка при отправке запроса:', error);
+        alert('Ошибка при отправке запроса: ' + error.message);
+    }
+});
+    </script>
     
 </body>
 </html>

@@ -8,7 +8,9 @@ import usersRouter from './routes/users.js'
 import registerRouter from './routes/register.js'
 import cartRouter from './routes/cart.js'
 import dishesRouter from './routes/dishes.js'
-import UsersModels from './models/UsersModels.js'
+import UsersModels from './models/UsersModels.js';
+import UserService from './services/UserService.js';
+
 import bcrypt from 'bcrypt';
 
 export const app = express();
@@ -25,6 +27,7 @@ app.use('/users', usersRouter);
 app.use('/auth', registerRouter);
 app.use('/cart', cartRouter);
 app.use('/dishes', dishesRouter);
+app.use('/UserService', UserService)
 
 
 try{
