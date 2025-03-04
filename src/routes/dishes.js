@@ -3,17 +3,16 @@ import DishService from '../services/DishService.js';
 
 const router = express.Router();
 
-// Получение всех блюд
-app.get("/dishes", async (req, res) => {
+
+router.get("/", async (req, res) => { 
     try {
-        const dishes = await Dish.findAll(); // Получаем все блюда из базы
-        res.json(dishes); // Отправляем их клиенту
+        const dishes = await DishService.getAllDishes(); 
+        res.json(dishes); 
     } catch (error) {
         res.status(500).json({ error: "Ошибка при получении блюд" });
     }
 });
 
-// Добавление 
 router.post('/', async (req, res) => {
     try {
         const newDish = await DishService.addDish(req.body);
@@ -23,7 +22,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Удаление
+
 router.delete('/:id', async (req, res) => {
     try {
         await DishService.deleteDish(req.params.id);
@@ -33,7 +32,7 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// Обновление 
+
 router.put('/:id', async (req, res) => {
     try {
         const updatedDish = await DishService.updateDish(req.params.id, req.body);
