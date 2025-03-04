@@ -27,7 +27,7 @@ app.use('/users', usersRouter);
 app.use('/auth', registerRouter);
 app.use('/cart', cartRouter);
 app.use('/dishes', dishesRouter);
-app.use('/UserService', UserService)
+
 
 
 try{

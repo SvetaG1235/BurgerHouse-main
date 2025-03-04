@@ -1,16 +1,49 @@
 import express from 'express';
-import UserService from '../services/UserService';
+import UserService from '../services/UserService.js';
+import bcrypt from 'bcrypt';
+
 const router = express.Router();
 
-
-router.get('/register', function(req, res, next) {
-  res.render('register.hbs', { title: 'Express' });
+router.get('/register', (req, res) => {
+    res.render('register.hbs', { title: 'Регистрация' });
 });
-router.get('/enter', function(req, res, next) {
-    res.render('enter.hbs', { title: 'Express' });
-  });
 
-  router.post('/enter', async (req, res) => {
+
+router.get('/enter', (req, res) => {
+    res.render('enter.hbs', { title: 'Вход' });
+});
+
+router.post('/register', async (req, res) => {
+    try {
+        const { name, phone, email, username, password, confirmPassword, age, role } = req.body;
+
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ error: 'Пароли не совпадают' });
+        }
+
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await UserService.addUser({
+            name,
+            phone,
+            email,
+            username,
+            password: hashedPassword,
+            age,
+            role
+        });
+
+        res.status(201).json({ message: 'Пользователь успешно зарегистрирован', user: newUser });
+    } catch (error) {
+        console.error('Ошибка при регистрации пользователя:', error);
+        res.status(500).json({ error: 'Ошибка при регистрации пользователя' });
+    }
+});
+
+
+router.post('/enter', async (req, res) => {
     try {
         const { username, password } = req.body;
 
@@ -44,4 +77,5 @@ router.get('/enter', function(req, res, next) {
         res.status(500).json({ error: 'Ошибка при входе' });
     }
 });
-export default router
+
+export default router;

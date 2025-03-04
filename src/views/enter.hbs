@@ -27,8 +27,7 @@
         </div>
     </div>
      <script>
-    
-       document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
@@ -44,11 +43,16 @@
             body: JSON.stringify({ username, password })
         });
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка ${response.status}: ${errorText}`);
+        }
+
         const result = await response.json();
 
-        if (response.ok) {
+        if (result.message === 'Вход выполнен успешно') {
             alert('Вход выполнен успешно!');
-            window.location.href = '/';
+            window.location.href = '.'; 
         } else {
             alert('Ошибка: ' + result.error);
         }
