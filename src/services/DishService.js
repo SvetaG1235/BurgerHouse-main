@@ -1,46 +1,48 @@
-import DishModel from "../models/DishModel.js";
+import Dish from '../models/DishModel.js'; 
 
 class DishService {
-    constructor() {
-        this.dishModel = DishModel;
-    }
-
-    async getAllDishes() {
+    static async getAllDishes() {
         try {
-            return await this.dishModel.findAll();
-        } catch (e) {
-            console.error('Ошибка при получении блюд:', e);
-            throw e;
+            const dishes = await Dish.findAll();
+            return dishes;
+        } catch (error) {
+            throw new Error('Ошибка при получении блюд: ' + error.message);
         }
     }
 
-    async addDish(dishData) {
+    static async addDish(dishData) {
         try {
-            return await this.dishModel.create(dishData);
-        } catch (e) {
-            console.error('Ошибка при добавлении блюда:', e);
-            throw e;
+            const newDish = await Dish.create(dishData);
+            return newDish;
+        } catch (error) {
+            throw new Error('Ошибка при добавлении блюда: ' + error.message);
         }
     }
 
-    async deleteDish(id) {
+    static async deleteDish(id) {
         try {
-            return await this.dishModel.destroy({ where: { id } });
-        } catch (e) {
-            console.error('Ошибка при удалении блюда:', e);
-            throw e;
+            const dish = await Dish.findByPk(id);
+            if (!dish) {
+                throw new Error('Блюдо не найдено');
+            }
+            await dish.destroy();
+        } catch (error) {
+            throw new Error('Ошибка при удалении блюда: ' + error.message);
         }
     }
 
-    async updateDish(id, dishData) {
+    static async updateDish(id, dishData) {
         try {
-            return await this.dishModel.update(dishData, { where: { id } });
-        } catch (e) {
-            console.error('Ошибка при обновлении блюда:', e);
-            throw e;
+            const dish = await Dish.findByPk(id);
+            if (!dish) {
+                throw new Error('Блюдо не найдено');
+            }
+            const updatedDish = await dish.update(dishData);
+            return updatedDish;
+        } catch (error) {
+            throw new Error('Ошибка при обновлении блюда: ' + error.message);
         }
     }
 }
 
-const dishService = new DishService();
-export default dishService;
+export default DishService;

@@ -23,4 +23,4 @@ const OrderModels = sequelizeDB.define("Order", {
     
 })
 
-export default OrderModels
+export default Order

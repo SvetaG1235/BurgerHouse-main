@@ -1,7 +1,7 @@
 import sequelizeDB from "../db.js";
 import {Sequelize} from "sequelize";
 import { DataTypes } from "sequelize";
-import { app } from "../app.js";
+import app from '../app.js'
 
 const Dish = sequelizeDB.define("Dish", {
     id: {

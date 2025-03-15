@@ -1,36 +1,40 @@
-import UsersModels from "../models/UsersModels.js";
+import UsersModels from '../models/UsersModels.js';
 
-class UserServices {
-    users = undefined;
-
-    constructor() {
-        this.users = UsersModels;
-    }
-
-    async getAllUsers() {
-        let allUsers = undefined;
+class UserService {
+    static async getAllUsers() {
         try {
-            allUsers = await this.users.findAll();
-        } catch (e) {
-            console.log('Упс! Мы как то сломались:(');
-            console.log(e);
+            return await UsersModels.findAll();
+        } catch (error) {
+            console.error('Ошибка при получении пользователей:', error);
+            throw new Error('Не удалось получить пользователей');
         }
-        return allUsers;
     }
 
-    async addUser() {
-        const user = {
-            name: `Василий`,
-            age: 45
-        };
+ 
+    static async updateUser(id, userData) {
         try {
-            return await this.users.create(user);
-        } catch (e) {
-            console.log('Упс! Мы не смогли создать пользоваля:(');
-            console.log(e);
+            const user = await UsersModels.findByPk(id);
+            if (!user) {
+                throw new Error('Пользователь не найден');
+            }
+            return await user.update(userData);
+        } catch (error) {
+            console.error('Ошибка при обновлении пользователя:', error);
+            throw new Error('Не удалось обновить пользователя');
+        }
+    }
+    static async deleteUser(id) {
+        try {
+            const user = await UsersModels.findByPk(id);
+            if (!user) {
+                throw new Error('Пользователь не найден');
+            }
+            await user.destroy();
+        } catch (error) {
+            console.error('Ошибка при удалении пользователя:', error);
+            throw new Error('Не удалось удалить пользователя');
         }
     }
 }
 
-const UserService = new UserServices();
 export default UserService;
