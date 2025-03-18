@@ -10,39 +10,87 @@
     <div class="main">
         <div class="forms">
             <h2>Регистрация</h2>
-            <form id="registerForm" method="POST" action="/register">
-    <div class="form-group">
-        <input type="text" class="register-form-control" name="name" placeholder="Введите ФИО пользователя" required>
-    </div>
-    <div class="form-group">
-        <input type="tel" class="register-form-control" name="phone" placeholder="Введите номер телефона" required>
-    </div>
-    <div class="form-group">
-        <input type="email" class="register-form-control" name="email" placeholder="Введите ваш email" required>
-    </div>
-    <div class="form-group">
-        <input type="text" class="register-form-control" name="username" placeholder="Введите имя пользователя (логин)" required>
-    </div>
-    <div class="form-group">
-        <input type="password" class="register-form-control" name="password" placeholder="Введите пароль" required>
-    </div>
-    <div class="form-group">
-        <input type="password" class="register-form-control" name="confirmPassword" placeholder="Подтвердите пароль" required>
-    </div>
-    <div class="form-group">
-        <input type="number" class="register-form-control" name="age" placeholder="Введите ваш возраст" required>
-    </div>
-    <div class="form-group">
-        <select name="role" class="register-form-control" required>
-            <option value="1">Пользователь</option>
-            <option value="2">Администратор</option>
-     
-        </select>
-    </div>
-    <button type="submit" class="register-form-control">Зарегистрироваться</button>
-</form>
+            <form id="registerForm">
+                <div class="form-group">
+                    <input type="text" class="register-form-control" name="name" placeholder="Введите ФИО пользователя" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" class="register-form-control" name="phone" placeholder="Введите номер телефона" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="register-form-control" name="email" placeholder="Введите ваш email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="register-form-control" name="username" placeholder="Введите имя пользователя (логин)" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="register-form-control" name="password" placeholder="Введите пароль" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="register-form-control" name="confirmPassword" placeholder="Подтвердите пароль" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="register-form-control" name="age" placeholder="Введите ваш возраст" required>
+                </div>
+                <div class="form-group">
+                    <select name="role" class="register-form-control" required>
+                        <option value="1">Пользователь</option>
+                        <option value="2">Администратор</option>
+                    </select>
+                </div>
+                <button type="submit" class="register-form-control">Зарегистрироваться</button>
+            </form>
             <p>Уже есть аккаунт? <a href="enter">Войти</a></p>
         </div>
     </div>
+
+    <script>
+    document.getElementById('registerForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); 
+        const name = document.querySelector('input[name="name"]').value;
+        const phone = document.querySelector('input[name="phone"]').value;
+        const email = document.querySelector('input[name="email"]').value;
+        const username = document.querySelector('input[name="username"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+        const age = document.querySelector('input[name="age"]').value;
+        const role = document.querySelector('select[name="role"]').value;
+
+        try {
+            const response = await fetch('/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name,
+                    phone,
+                    email,
+                    username,
+                    password,
+                    confirmPassword,
+                    age,
+                    role
+                }),
+            });
+
+            // Проверяем статус ответа
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка при регистрации');
+            }
+
+            const data = await response.json();
+            alert(data.message); // Успешное сообщение
+
+            // Здесь можно перенаправить пользователя на другую страницу, если это необходимо
+            // window.location.href = '/some-other-page';
+
+        } catch (error) {
+            console.error('Ошибка при отправке данных:', error);
+            alert('Произошла ошибка при регистрации: ' + error.message);
+        }
+    });
+    </script>
 </body>
 </html>
