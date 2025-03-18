@@ -10,6 +10,18 @@ class DishController {
         }
     }
 
+    static async getDishById(req, res) {
+        try {
+            const dish = await DishService.getDishById(req.params.id);
+            if (!dish) {
+                return res.status(404).json({ error: 'Блюдо не найдено' });
+            }
+            res.json(dish);
+        } catch (error) {
+            res.status(500).json({ error: "Ошибка при получении блюда" });
+        }
+    }
+
     static async addDish(req, res) {
         try {
             const newDish = await DishService.addDish(req.body);
@@ -33,7 +45,29 @@ class DishController {
             const updatedDish = await DishService.updateDish(req.params.id, req.body);
             res.json(updatedDish);
         } catch (e) {
-            res.status(500).json({ error: e.message });
+            if (e.message === 'Блюдо не найдено') {
+                res.status(404).json({ error: e.message });
+            } else {
+                res.status(500).json({ error: e.message });
+            }
+        }
+    }
+
+    static async addAllDishes(req, res) {
+        try {
+            console.log("Добавление всех блюд...");
+            const createdDishes = await DishService.addAllDishes();
+            console.log("Блюда добавлены:", createdDishes);
+            res.status(201).json(createdDishes);
+        } catch (error) {
+            console.error('Ошибка при добавлении блюд:', error);
+            res.status(500).json({ error: 'Ошибка при добавлении блюд' });
+        }
+        try {
+            const createdDishes = await DishService.addAllDishes();
+            res.status(201).json(createdDishes);
+        } catch (error) {
+            res.status(500).json({ error: 'Ошибка при добавлении блюд' });
         }
     }
 }
