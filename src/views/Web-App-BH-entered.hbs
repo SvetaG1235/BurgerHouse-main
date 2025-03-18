@@ -25,15 +25,19 @@
             <h1>Меню</h1>
         </div>
 
-        <div class="switchmenu">
-         {{#each dishes}}
-            <div class="burgers">
-                <h2>{{this.dish_category}}</h2>
-                <p>Калории: {{this.calories}}</p>
-                <p>Цена: {{this.price}}$</p>
-            </div>
-            {{/each}}
+     <div class="switchmenu">
+    {{#each dishes}}
+        <div class="burgers">
+            <h2>{{this.name}}</h2>
+            <img src="{{this.image}}" alt="{{this.name}}" class="burger-image">
+            <p>Категория: {{this.dish_category}}</p>
+            <p>Калории: {{this.calories}}</p>
+            <p>Цена: {{this.price}}$</p>
+            <p>{{this.description}}</p>
+            <button class="add-to-cart" data-id="{{this.id}}">Добавить в корзину</button>
         </div>
+    {{/each}}
+</div>
 
         <div class="stillmenu">
             <div>
