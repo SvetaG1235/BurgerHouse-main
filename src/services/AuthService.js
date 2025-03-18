@@ -9,16 +9,11 @@ class AuthService {
         return await bcrypt.hash(password, 10);
     }
 
-    /**
-     * Сравнение паролей.
-     */
+ 
     static async comparePasswords(password, hashedPassword) {
         return await bcrypt.compare(password, hashedPassword);
     }
 
-    /**
-     * Найти пользователя по имени пользователя.
-     */
     static async findUserByUsername(username) {
         try {
             return await UsersModels.findOne({ where: { username } });
@@ -28,9 +23,6 @@ class AuthService {
         }
     }
 
-    /**
-     * Регистрация нового пользователя.
-     */
     static async register(userData) {
         try {
             return await UsersModels.create(userData);
