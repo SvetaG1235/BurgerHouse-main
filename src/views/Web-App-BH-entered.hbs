@@ -25,19 +25,28 @@
             <h1>Меню</h1>
         </div>
 
-        <div class="switchmenu">
-         {{#each dishes}}
-            <div class="burgers">
-                <h2>{{this.dish_category}}</h2>
-                <p>Калории: {{this.calories}}</p>
-                <p>Цена: {{this.price}}$</p>
-            </div>
-            {{/each}}
+     <div class="switchmenu">
+    {{#each dishes}}
+        <div class="burgers">
+            <h2>{{this.name}}</h2>
+            <img src="{{this.image}}" alt="{{this.name}}" class="burger-image">
+            <p>Категория: {{this.dish_category}}</p>
+            <p>Калории: {{this.calories}}</p>
+            <p>Цена: {{this.price}}$</p>
+            <p>{{this.description}}</p>
+            <button class="add-to-cart" data-id="{{this.id}}">Добавить в корзину</button>
         </div>
+    {{/each}}
+</div>
 
-        <div class="stillmenu">
+       <div class="stillmenu">
             <div>
-
+                <img src="/src/public/images/chickens.jpg" alt="Куриные бургеры">
+                <img src="/src/public/images/fris.jpg" alt="Фри">
+                <img src="/src/public/images/goviadines.jpg" alt="Говяжьи бургеры">
+                <img src="/src/public/images/hlebs.jpg" alt="Сэндвичи">
+                <img src="/src/public/images/pigs.jpg" alt="Свиные бургеры">
+                <img src="/src/public/images/shaurmas.jpg" alt="Шаурма">
             </div>
         </div>
     </div>
