@@ -44,5 +44,37 @@
             <p>Уже есть аккаунт? <a href="enter">Войти</a></p>
         </div>
     </div>
+
+    <script>
+        // Обработка отправки формы
+        document.getElementById('registerForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Отменяем стандартное поведение формы
+
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message || 'Регистрация прошла успешно');
+                    window.location.href = '/auth/enter'; // Перенаправляем на страницу входа
+                } else {
+                    alert(result.error || 'Ошибка при регистрации');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при отправке запроса');
+            }
+        });
+    </script>
 </body>
 </html>
