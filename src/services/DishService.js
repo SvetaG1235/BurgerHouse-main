@@ -5,15 +5,18 @@ class DishService {
         try {
             return await Dish.findAll();
         } catch (error) {
-            throw new Error('Ошибка при получении блюд: ' + error.message);
+            throw new Error(`Ошибка при получении блюд: ${error.message}`);
         }
     }
 
     static async addDish(dishData) {
         try {
+            if (!dishData.name || !dishData.price || !dishData.dish_category) {
+                throw new Error('Необходимо указать название, цену и категорию блюда');
+            }
             return await Dish.create(dishData);
         } catch (error) {
-            throw new Error('Ошибка при добавлении блюда: ' + error.message);
+            throw new Error(`Ошибка при добавлении блюда: ${error.message}`);
         }
     }
 
@@ -25,7 +28,7 @@ class DishService {
             }
             await dish.destroy();
         } catch (error) {
-            throw new Error('Ошибка при удалении блюда: ' + error.message);
+            throw new Error(`Ошибка при удалении блюда: ${error.message}`);
         }
     }
 
@@ -37,7 +40,7 @@ class DishService {
             }
             return await dish.update(dishData);
         } catch (error) {
-            throw new Error('Ошибка при обновлении блюда: ' + error.message);
+            throw new Error(`Ошибка при обновлении блюда: ${error.message}`);
         }
     }
 
@@ -148,7 +151,6 @@ class DishService {
                     calories: 650,
                     description: "Булочка черная, котлета, яйцо, сыр чеддер, лук, пекинская капуста, салат, соус 'русский', 380 грамм"
                 },
-            
                 {
                     id: 14,
                     name: "Big boss",
@@ -173,7 +175,6 @@ class DishService {
                     calories: 650,
                     description: "Куриное филе, шампиньоны, картофель фри, маринованный лук, соус на выбор: острый, сливочный, сырный, чесночный, 300 грамм"
                 },
-            
                 {
                     id: 17,
                     name: "Сэндвич с беконом",
@@ -182,7 +183,6 @@ class DishService {
                     calories: 650,
                     description: "Тостовый хлеб, бекон, яйцо, сыр чеддер, салат, маринованные огурчики, дижоанская горчица, майонез, 280 грамм"
                 },
-            
                 {
                     id: 18,
                     name: "Сэндвич с курочкой",
@@ -191,7 +191,6 @@ class DishService {
                     calories: 650,
                     description: "Тостовый хлеб, курица жареная, сыр чеддер, яйцо, салат, томат, майонез, соус тар-тар, 290 грамм"
                 },
-            
                 {
                     id: 19,
                     name: "Мини бургер курица",
@@ -200,7 +199,6 @@ class DishService {
                     calories: 650,
                     description: "Булочка, котлета, сыр чеддер, маринованые огурчики, лук, салат соус 'русский', 160 грамм"
                 },
-            
                 {
                     id: 20,
                     name: "Мини бургер свинина",
@@ -209,7 +207,6 @@ class DishService {
                     calories: 650,
                     description: "Булочка, котлета, сыр чеддер, маринованые огурчики, лук, салат соус 'русский', 160 грамм"
                 },
-            
                 {
                     id: 21,
                     name: "Мини бургер говядина",
@@ -218,7 +215,6 @@ class DishService {
                     calories: 650,
                     description: "Булочка, котлета, сыр чеддер, маринованые огурчики, лук, салат соус 'русский', 160 грамм"
                 },
-            
                 {
                     id: 22,
                     name: "Картофель фри",
@@ -227,7 +223,6 @@ class DishService {
                     calories: 650,
                     description: "Хрустящий картофель фри с панировкой во фритюре, 100 грамм"
                 },
-            
                 {
                     id: 23,
                     name: "Луковые кольца",
@@ -243,7 +238,7 @@ class DishService {
                     price: 169,
                     calories: 650,
                     description: "Небольшие пельмешки во фритюре с мясом свинина говядина, 10 штук"
-                }, 
+                },
                 {
                     id: 25,
                     name: "Сырные палочки",
@@ -292,7 +287,6 @@ class DishService {
                     calories: 650,
                     description: "Сырные медальоны с перцем халапеньо в панировке, обжаренные во фритюре, 23232 штук"
                 },
-                
                 {
                     id: 31,
                     name: "Картошка по-деревенски",
@@ -357,7 +351,6 @@ class DishService {
                     calories: 650,
                     description: "Соус сырный, 30 миллилитров"
                 },
-                
                 {
                     id: 39,
                     name: "Тар-тар",
@@ -399,9 +392,25 @@ class DishService {
                     description: "Соус горчичный, 30 миллилитров"
                 },
             ];
-            return await Dish.bulkCreate(dishes);
+            console.log('Добавление блюд в базу данных...');
+            const result = await Dish.bulkCreate(dishes);
+            console.log('Блюда успешно добавлены:', result);
+            return result;
         } catch (error) {
-            throw new Error('Ошибка при добавлении блюд: ' + error.message);
+            console.error('Ошибка при добавлении блюд:', error);
+            throw new Error(`Ошибка при добавлении блюд: ${error.message}`);
+        }
+    }
+
+    static async getDishById(id) {
+        try {
+            const dish = await Dish.findByPk(id);
+            if (!dish) {
+                throw new Error('Блюдо не найдено');
+            }
+            return dish;
+        } catch (error) {
+            throw new Error(`Ошибка при получении блюда: ${error.message}`);
         }
     }
 }

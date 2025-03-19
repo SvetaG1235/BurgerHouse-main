@@ -8,7 +8,6 @@ import indexRouter from './routes/IndexRoutes.js';
 import authRouter from './routes/AuthRoutes.js';
 import cartRouter from './routes/CartRoutes.js';
 import dishRouter from './routes/DishRoutes.js';
-// import adminRouter from './routes/AdminRouter.js';
 
 const app = express();
 const __dirname = path.resolve();
@@ -17,7 +16,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); 
 app.use(cookieParser()); 
-app.use(express.static(path.join(__dirname, 'src/public/stylesheets'))); 
+
+// Настройка статической папки для всей папки public
+app.use(express.static(path.join(__dirname, 'src/public'))); 
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'src/views'));
@@ -30,7 +31,6 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter); 
 app.use('/cart', cartRouter); 
 app.use('/dishes', dishRouter); 
-// app.use('/admin', adminRouter); 
 
 const syncDatabase = async () => {
     try {
