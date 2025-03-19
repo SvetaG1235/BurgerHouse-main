@@ -50,38 +50,39 @@ html, body {
 
 .stillmenu {
     display: flex;
-    flex-direction: column; /* Располагаем элементы в колонку */
-    align-items: center; /* Центрирование по горизонтали */
-    padding: 20px; /* Отступы */
+    flex-direction: column; 
+    align-items: center; 
+    padding: 20px;
     background-color: var(--main-color);
-    gap: 20px; /* Расстояние между изображениями */
-    height: auto; /* Автоматическая высота */
+    gap: 20px;
+    height: auto;
 }
 
 .stillmenu img {
-    width: 70vw; /* 70% от ширины экрана */
-    height: auto; /* Автоматическая высота для сохранения пропорций */
-    object-fit: cover; /* Сохраняет пропорции изображения, обрезая лишнее */
-    border-radius: 10px; /* Закругленные углы */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень для красоты */
-    cursor: pointer; /* Курсор в виде указателя */
-    transition: transform 0.3s ease; /* Плавное увеличение при наведении */
+    width: 70vw; 
+    height: auto; 
+    object-fit: cover; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    cursor: pointer; 
+    transition: transform 0.3s ease; 
 }
 
 .stillmenu img:hover {
-    transform: scale(1.05); /* Увеличение изображения при наведении */
+    transform: scale(1.05);
 }
 
-/* Стили для модального окна */
+
+
 .modal {
-    display: none; /* Скрыто по умолчанию */
+    display: none; 
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный черный фон */
+    background-color: rgba(0, 0, 0, 0.9); 
     justify-content: center;
     align-items: center;
 }
@@ -153,6 +154,7 @@ html, body {
 
 #menu_button {
     background-color: var(--yellow);
+    background-image: url('/images/logo.png');
     border: none;
     padding: 10px 20px;
     cursor: pointer;
