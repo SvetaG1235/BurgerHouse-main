@@ -41,11 +41,12 @@
             <img src="/images/fris.jpg" alt="Фри">
         </div>
     </div>
-
-        <span class="close">&times;</span>
-        <img id="modalImage" class="modal-content">
-        <a class="prev">&#10094;</a>
-        <a class="next">&#10095;</a>
+   <div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <img id="modalImage" class="modal-content">
+    <a class="prev">&#10094;</a>
+    <a class="next">&#10095;</a>
+</div>
     </div>
 
     <script>
@@ -85,7 +86,9 @@
                 modal.style.display = 'none';
             }
         });
-        //меню
+       </script>
+
+       <script>
          document.getElementById('menu_button').addEventListener('click', function() {
         var dropdownMenu = document.getElementById('dropdownMenu');
         dropdownMenu.classList.toggle('show');
