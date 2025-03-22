@@ -17,7 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false })); 
 app.use(cookieParser()); 
 
-// Настройка статической папки для всей папки public
 app.use(express.static(path.join(__dirname, 'src/public'))); 
 
 app.set('view engine', 'hbs');
@@ -27,9 +26,10 @@ app.get('/web-app-bh-entered', (req, res) => {
     res.render('web-app-bh-entered.hbs', { title: 'Добро пожаловать' });
 });
 
-app.use('/', indexRouter); 
+
+app.use('/', indexRouter);
 app.use('/auth', authRouter); 
-app.use('/cart', cartRouter); 
+app.use('/cart', cartRouter);
 app.use('/dishes', dishRouter); 
 
 const syncDatabase = async () => {
@@ -47,5 +47,6 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Что-то пошло не так!');
 });
+
 
 export default app;

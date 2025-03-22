@@ -22,15 +22,20 @@
             <h1>Меню</h1>
         </div>
 
-        <div class="switchmenu">
-            {{#each dishes}}
-                <div class="burgers">
-                    <h2>{{this.dish_category}}</h2>
-                    <p>Калории: {{this.calories}}</p>
-                    <p>Цена: {{this.price}}$</p>
-                </div>
-            {{/each}}
-        </div>
+       <div class="switchmenu">
+    {{#if dishes.length}}
+        {{#each dishes}}
+            <div class="burgers">
+                <h1>{{this.name}}</h1>
+                <p>{{this.description}}</p>
+                <p>Калории: {{this.calories}}</p>
+                <p>Цена: {{this.price}}$</p>
+            </div>
+        {{/each}}
+    {{else}}
+        <p>Блюда не найдены.</p>
+    {{/if}}
+</div>
 
         <div class="stillmenu">
             <img src="/images/chickens.jpg" alt="Куриные бургеры">

@@ -1,18 +1,50 @@
 import CartService from '../services/CartService.js';
 
 class CartController {
-    static renderCartPage(req, res) {
-        res.render('cart.hbs', { title: 'Корзина' });
-    }
-
     static async addToCart(req, res) {
         try {
-            const { productId, quantity } = req.body;
-            const userId = req.user.id; // Предполагаем, что пользователь авторизован
-            const cartItem = await CartService.addToCart(userId, productId, quantity);
-            res.json(cartItem);
+            const { dishId, quantity } = req.body;
+            const item = await CartService.addToCart(dishId, quantity);
+            res.status(201).json(item);
         } catch (error) {
-            res.status(500).json({ error: 'Ошибка при добавлении товара в корзину' });
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    static async removeFromCart(req, res) {
+        try {
+            const { dishId } = req.params;
+            await CartService.removeFromCart(dishId);
+            res.status(204).send();
+        } catch (error) {
+            res.status(404).json({ error: error.message });
+        }
+    }
+
+    static async updateQuantity(req, res) {
+        try {
+            const { dishId } = req.params;
+            const { quantity } = req.body;
+            const item = await CartService.updateQuantity(dishId, quantity);
+            res.status(200).json(item);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    static async getCart(req, res) {
+        try {
+            console.log('Рендеринг корзины...'); 
+            const cart = await CartService.getCart();
+            const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+            res.render('cart', { 
+                cartItems: cart, 
+                totalPrice: totalPrice 
+            });
+        } catch (error) {
+            console.error('Ошибка при рендеринге корзины:', error); 
+            res.status(500).render('error', { error: error.message });
         }
     }
 }

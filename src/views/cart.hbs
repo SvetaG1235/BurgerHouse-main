@@ -27,55 +27,71 @@
                 <span id="cart-total-price">{{totalPrice}} руб.</span>
             </div>
         </div>
-  
     </div>
 
-<script>
-   document.addEventListener('DOMContentLoaded', async () => {
-  const cartItems = document.getElementById('cart-items');
-  const cartTotalPrice = document.getElementById('cart-total-price');
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotalPrice = document.getElementById('cart-total-price');
 
+            async function fetchCart() {
+                try {
+                    const response = await fetch('/cart');
+                    if (!response.ok) {
+                        throw new Error('Ошибка при загрузке корзины');
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    return [];
+                }
+            }
 
-  async function fetchCart() {
-    const response = await fetch('/cart');
-    const data = await response.json();
-    return data;
-  }
+            async function updateCart() {
+                const cart = await fetchCart();
+                cartItems.innerHTML = '';
+                let totalPrice = 0;
 
-  async function updateCart() {
-    const cart = await fetchCart();
-    cartItems.innerHTML = '';
-    let totalPrice = 0;
+                if (cart.length === 0) {
+                    cartItems.innerHTML = '<li>Корзина пуста</li>';
+                    cartTotalPrice.textContent = '0 руб.';
+                    return;
+                }
 
-    cart.forEach(item => {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        ${item.productId} - ${item.quantity} шт.
-        <button class="remove-item" data-id="${item.id}">Удалить</button>
-      `;
-      cartItems.appendChild(li);
-      totalPrice += item.price * item.quantity;
-    });
+                cart.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        ${item.name} - ${item.quantity} x ${item.price} руб.
+                        <button class="remove-item" data-id="${item.id}">Удалить</button>
+                    `;
+                    cartItems.appendChild(li);
+                    totalPrice += item.price * item.quantity;
+                });
+                cartTotalPrice.textContent = `${totalPrice} руб.`;
+            }
 
-    cartTotalPrice.textContent = `${totalPrice} руб.`;
-  }
+            async function removeItem(id) {
+                try {
+                    const response = await fetch(`/cart/${id}`, { method: 'DELETE' });
+                    if (!response.ok) {
+                        throw new Error('Ошибка при удалении товара');
+                    }
+                    updateCart(); 
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                }
+            }
 
-  async function removeItem(id) {
-    await fetch(`/cart/remove/${id}`, { method: 'DELETE' });
-    updateCart();
-  }
+            cartItems.addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-item')) {
+                    const itemId = event.target.dataset.id;
+                    removeItem(itemId);
+                }
+            });
 
-
-  cartItems.addEventListener('click', (event) => {
-    if (event.target.classList.contains('remove-item')) {
-      const itemId = event.target.dataset.id;
-      removeItem(itemId);
-    }
-  });
-
- 
-  updateCart();
-}); 
-</script>
+            updateCart();
+        });
+    </script>
 </body>
 </html>

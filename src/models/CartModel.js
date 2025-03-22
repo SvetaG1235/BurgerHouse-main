@@ -1,27 +1,21 @@
-import sequelizeDB from "../db.js";
-import {Sequelize} from "sequelize";
+import { DataTypes } from 'sequelize';
+import sequelize from '../db.js';
 
-const CartModels = sequelizeDB.define("Cart", {
+const Cart = sequelize.define('Cart', {
     id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false
+        autoIncrement: true,
     },
-
-    userId: {
-        type: Sequelize.INTEGER,
+    dishId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-      },
-      productId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      quantity: {
-        type: Sequelize.INTEGER,
+    },
+    quantity: {
+        type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1,
-      }
-})
+    },
+});
 
-export default CartModels
+export default Cart;
