@@ -59,6 +59,9 @@ class DishController {
         try {
             const dishes = await DishService.getAllDishes();
             console.log('Данные для шаблона:', dishes); // Логирование
+            
+            console.log('ок')
+            
             res.render('Web App Burger house.hbs', { dishes });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -68,8 +71,9 @@ class DishController {
     static async renderMenuForAuthUser(req, res) {
         try {
             const dishes = await DishService.getAllDishes();
-            console.log('Данные для шаблона (авторизованный):', JSON.stringify(dishes, null, 2)); // Логирование
-            res.render('Web-App-BH-entered.hbs', { dishes });
+            console.log('Данные для шаблона (авторизованный):', dishes); // Логирование
+            console.log(1111111)
+           res.render('Web-App-BH-entered.hbs', { dishes });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
