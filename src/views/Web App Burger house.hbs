@@ -20,7 +20,7 @@
         </div>
 
         <div class="maintext">
-            <h1>Меню</h1>
+            <h1 style="color: rgb(255, 205, 10);">БурGер house. Все дороги ведут к нам</h1>
         </div>
 
         <div class="switchmenu">
@@ -39,7 +39,6 @@
             {{/if}}
         </div>
 
-        <div id="cart-container"></div> <!-- Контейнер для корзины -->
 
         <div class="stillmenu">
             <img src="/images/chickens.jpg" alt="Куриные бургеры">
@@ -95,64 +94,33 @@
                 modal.style.display = 'none';
             }
         });
-
-        // Корзина
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-        function updateCartDisplay() {
-            const cartContainer = document.getElementById('cart-container');
-            cartContainer.innerHTML = ''; 
-
-            if (cart.length === 0) {
-                cartContainer.innerHTML = '<p>Корзина пуста</p>';
-                return;
-            }
-
-            cart.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.innerHTML = `
-                    ${item.name} - Количество: ${item.quantity} 
-                    <button class="remove-item" data-id="${item.id}">Удалить</button>
-                `;
-                cartContainer.appendChild(itemElement);
-            });
-        }
-
-        function addToCart(dishId, dishName, dishPrice) {
-            const existingDish = cart.find(item => item.id === dishId);
-            if (existingDish) {
-                existingDish.quantity += 1; 
-            } else {
-                const dish = { id: dishId, name: dishName, price: dishPrice, quantity: 1 };
-                cart.push(dish); 
-            }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartDisplay(); 
-        }
-
-        function removeFromCart(dishId) {
-            cart = cart.filter(item => item.id !== dishId); 
-            localStorage.setItem('cart', JSON.stringify(cart)); 
-            updateCartDisplay(); 
-        }
-
+       //кнопка Добавить в корзину
         document.querySelectorAll('.add_button').forEach(button => {
-            button.addEventListener('click', function() {
-                const dishId = this.getAttribute('data-id');
-                const dishName = this.getAttribute('data-name');
-                const dishPrice = parseFloat(this.getAttribute('data-price'));
-                addToCart(dishId, dishName, dishPrice); 
+    button.addEventListener('click', async function() {
+        const dishId = this.getAttribute('data-id');
+        const dishName = this.getAttribute('data-name');
+        const dishPrice = parseFloat(this.getAttribute('data-price'));
+
+        try {
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ dishId, quantity: 1 }) 
             });
-        });
 
-        document.getElementById('cart-container').addEventListener('click', function(event) {
-            if (event.target.classList.contains('remove-item')) {
-                const itemId = event.target.getAttribute('data-id');
-                removeFromCart(itemId);
+            if (response.ok) {
+                const item = await response.json();
+                alert(`${item.name} добавлен в корзину!`); 
+            } else {
+                console.error('Ошибка при добавлении в корзину');
             }
-        });
-
-        updateCartDisplay();
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    });
+});
 
         // Меню
         document.getElementById('menu_button').addEventListener('click', function() {
