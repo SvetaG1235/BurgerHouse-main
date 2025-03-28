@@ -10,14 +10,14 @@ html, body {
     padding: 0;
     box-sizing: border-box;
     width: 100%;
-    min-height: 100vh; /* Минимальная высота на весь экран */
+    min-height: 100vh;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .main {
     display: grid;
     width: 100%;
-    min-height: 100vh; /* Минимальная высота на весь экран */
+    min-height: 100vh;
     background-color: var(--main-color);
 }
 
@@ -163,7 +163,7 @@ html, body {
     transition: opacity 0.3s ease-in-out;
 }
 
-#add_button {
+.add_button {
     height: 70px;
     background-color: var(--yellow);
     border: 0.1em solid rgb(0, 0, 0);
@@ -174,7 +174,7 @@ html, body {
     transition: opacity 0.3s ease-in-out;
 }
 
-#add_button:hover{
+.add_button:hover{
     background-color: black;
 }
 
