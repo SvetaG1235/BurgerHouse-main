@@ -29,69 +29,55 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const cartItems = document.getElementById('cart-items');
-            const cartTotalPrice = document.getElementById('cart-total-price');
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartItems = document.getElementById('cart-items');
+        const cartTotalPrice = document.getElementById('cart-total-price');
 
-            async function fetchCart() {
-                try {
-                    const response = await fetch('/cart');
-                    if (!response.ok) {
-                        throw new Error('Ошибка при загрузке корзины');
-                    }
-                    const data = await response.json();
-                    return data;
-                } catch (error) {
-                    console.error('Ошибка:', error);
-                    return [];
-                }
+        function fetchCart() {
+            // Получаем данные из localStorage
+            return JSON.parse(localStorage.getItem('cart')) || [];
+        }
+
+        function updateCart() {
+            const cart = fetchCart();
+            cartItems.innerHTML = '';
+            let totalPrice = 0;
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<li>Корзина пуста</li>';
+                cartTotalPrice.textContent = '0 руб.';
+                return;
             }
 
-            async function updateCart() {
-                const cart = await fetchCart();
-                cartItems.innerHTML = '';
-                let totalPrice = 0;
-
-                if (cart.length === 0) {
-                    cartItems.innerHTML = '<li>Корзина пуста</li>';
-                    cartTotalPrice.textContent = '0 руб.';
-                    return;
-                }
-
-                cart.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        ${item.name} - ${item.quantity} x ${item.price} руб.
-                        <button class="remove-item" data-id="${item.id}">Удалить</button>
-                    `;
-                    cartItems.appendChild(li);
-                    totalPrice += item.price * item.quantity;
-                });
-                cartTotalPrice.textContent = `${totalPrice} руб.`;
-            }
-
-            async function removeItem(id) {
-                try {
-                    const response = await fetch(`/cart/${id}`, { method: 'DELETE' });
-                    if (!response.ok) {
-                        throw new Error('Ошибка при удалении товара');
-                    }
-                    updateCart(); 
-                } catch (error) {
-                    console.error('Ошибка:', error);
-                }
-            }
-
-            cartItems.addEventListener('click', (event) => {
-                if (event.target.classList.contains('remove-item')) {
-                    const itemId = event.target.dataset.id;
-                    removeItem(itemId);
-                }
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${item.name} - ${item.quantity} x ${item.price} руб.
+                    <button class="remove-item" data-id="${item.id}">Удалить</button>
+                `;
+                cartItems.appendChild(li);
+                totalPrice += item.price * item.quantity;
             });
+            cartTotalPrice.textContent = `${totalPrice} руб.`;
+        }
 
-            updateCart();
+        function removeItem(id) {
+            const cart = fetchCart();
+            const updatedCart = cart.filter(item => item.id !== id);
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            updateCart(); 
+        }
+
+        cartItems.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-item')) {
+                const itemId = event.target.dataset.id;
+                removeItem(itemId);
+            }
         });
-    </script>
+
+        updateCart();
+    });
+</script>
 </body>
 </html>
