@@ -4,7 +4,7 @@ class CartService {
     static async addToCart(dishId, quantity = 1) {
         try {
             const existingItem = await Cart.findOne({ where: { dishId } });
-            if (existingItem) {a
+            if (existingItem) {
                 existingItem.quantity += quantity;
                 await existingItem.save();
                 return existingItem;
@@ -50,6 +50,15 @@ class CartService {
             throw new Error(`Ошибка при получении корзины: ${error.message}`);
         }
     }
+
+    static async getTotalPrice() {
+        try {
+            const cartItems = await this.getCart();
+            return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        } catch (error) {
+            throw new Error(`Ошибка при получении общей стоимости: ${error.message}`);
+        }
+    }
 }
 
-export default CartService;
+export default CartService;ы
