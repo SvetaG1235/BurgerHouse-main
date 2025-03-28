@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,27 +16,30 @@
         </div>
         <div class="dropdown-menu" id="dropdownMenu">
             <a href="auth/register">Войти в аккаунт</a>
+            <a href="/cart">Корзина</a>
         </div>
 
         <div class="maintext">
             <h1>Меню</h1>
         </div>
 
-       <div class="switchmenu">
-    {{#if dishes.length}}
-        {{#each dishes}}
-            <div class="burgers">
-                <h1>{{this.name}}</h1>
-                <p>{{this.description}}</p>
-                <p>Калории: {{this.calories}}</p>
-                <p>Цена: {{this.price}}$</p>   
-                <button id="add_button">Добавить в корзину</button>  
-            </div>
-        {{/each}}
-    {{else}}
-        <p>Блюда не найдены.</p>
-    {{/if}}>
-</div>
+        <div class="switchmenu">
+            {{#if dishes.length}}
+                {{#each dishes}}
+                    <div class="burgers">
+                        <h1>{{this.name}}</h1>
+                        <p>{{this.description}}</p>
+                        <p>Калории: {{this.calories}}</p>
+                        <p>Цена: {{this.price}}$</p>   
+                        <button class="add_button" data-id="{{this.id}}" data-name="{{this.name}}" data-price="{{this.price}}">Добавить в корзину</button>  
+                    </div>
+                {{/each}}
+            {{else}}
+                <p>Блюда не найдены.</p>
+            {{/if}}
+        </div>
+
+        <div id="cart-container"></div> <!-- Контейнер для корзины -->
 
         <div class="stillmenu">
             <img src="/images/chickens.jpg" alt="Куриные бургеры">
@@ -47,12 +50,12 @@
             <img src="/images/fris.jpg" alt="Фри">
         </div>
     </div>
-   <div id="modal" class="modal">
-    <span class="close">&times;</span>
-    <img id="modalImage" class="modal-content">
-    <a class="prev">&#10094;</a>
-    <a class="next">&#10095;</a>
-</div>
+
+    <div id="modal" class="modal">
+        <span class="close">&times;</span>
+        <img id="modalImage" class="modal-content">
+        <a class="prev">&#10094;</a>
+        <a class="next">&#10095;</a>
     </div>
 
     <script>
@@ -92,23 +95,81 @@
                 modal.style.display = 'none';
             }
         });
-       </script>
 
-       <script>
-         document.getElementById('menu_button').addEventListener('click', function() {
-        var dropdownMenu = document.getElementById('dropdownMenu');
-        dropdownMenu.classList.toggle('show');
-    });
-    window.onclick = function(event) {
-        var dropdownMenu = document.getElementById('dropdownMenu');
-        var menuButton = document.getElementById('menu_button');
+        // Корзина
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        if (!event.target.matches('#menu_button') && !event.target.closest('.dropdown-menu')) {
-            dropdownMenu.classList.remove('show');
-            menuButton.style.opacity = 1; 
-            menuButton.style.pointerEvents = 'auto'; 
+        function updateCartDisplay() {
+            const cartContainer = document.getElementById('cart-container');
+            cartContainer.innerHTML = ''; 
+
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<p>Корзина пуста</p>';
+                return;
+            }
+
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.innerHTML = `
+                    ${item.name} - Количество: ${item.quantity} 
+                    <button class="remove-item" data-id="${item.id}">Удалить</button>
+                `;
+                cartContainer.appendChild(itemElement);
+            });
         }
-    };
+
+        function addToCart(dishId, dishName, dishPrice) {
+            const existingDish = cart.find(item => item.id === dishId);
+            if (existingDish) {
+                existingDish.quantity += 1; 
+            } else {
+                const dish = { id: dishId, name: dishName, price: dishPrice, quantity: 1 };
+                cart.push(dish); 
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDisplay(); 
+        }
+
+        function removeFromCart(dishId) {
+            cart = cart.filter(item => item.id !== dishId); 
+            localStorage.setItem('cart', JSON.stringify(cart)); 
+            updateCartDisplay(); 
+        }
+
+        document.querySelectorAll('.add_button').forEach(button => {
+            button.addEventListener('click', function() {
+                const dishId = this.getAttribute('data-id');
+                const dishName = this.getAttribute('data-name');
+                const dishPrice = parseFloat(this.getAttribute('data-price'));
+                addToCart(dishId, dishName, dishPrice); 
+            });
+        });
+
+        document.getElementById('cart-container').addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-item')) {
+                const itemId = event.target.getAttribute('data-id');
+                removeFromCart(itemId);
+            }
+        });
+
+        updateCartDisplay();
+
+        // Меню
+        document.getElementById('menu_button').addEventListener('click', function() {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
+        });
+
+        window.onclick = function(event) {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            var menuButton = document.getElementById('menu_button');
+
+            if (!event.target.matches('#menu_button') && !event.target.closest('.dropdown-menu')) {
+                dropdownMenu.classList.remove('show');
+                menuButton.style.opacity = 1; 
+                menuButton.style.pointerEvents = 'auto'; 
+            }
+        };
     </script>
 </body>
 </html>
