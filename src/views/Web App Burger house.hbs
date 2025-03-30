@@ -23,13 +23,18 @@
         </div>
 
        <div class="switchmenu">
-    {{#if dishes.length}}
-        {{#each dishes}}
-            <div class="burgers">
-                <h1>{{this.name}}</h1>
-                <p>{{this.description}}</p>
-                <p>Калории: {{this.calories}}</p>
-                <p>Цена: {{this.price}}$</p>
+    {{#if groupedDishes}}
+        {{#each groupedDishes}}
+            <div class="category">
+                <h2>{{@key}}</h2> <!-- Название категории -->
+                {{#each this}}
+                    <div class="burgers">
+                        <h3>{{this.name}}</h3>
+                        <p>{{this.description}}</p>
+                        <p>Калории: {{this.calories}}</p>
+                        <p>Цена: {{this.price}}$</p>
+                    </div>
+                {{/each}}
             </div>
         {{/each}}
     {{else}}
