@@ -10,14 +10,14 @@ html, body {
     padding: 0;
     box-sizing: border-box;
     width: 100%;
-    min-height: 100vh; /* Минимальная высота на весь экран */
+    min-height: 100vh;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .main {
     display: grid;
     width: 100%;
-    min-height: 100vh; /* Минимальная высота на весь экран */
+    min-height: 100vh;
     background-color: var(--main-color);
 }
 
@@ -145,6 +145,7 @@ html, body {
 
 .burgers {
     display: flex;
+    flex-direction: column;
     height: 45vh;
     width: 50vw;
     background-color: var(--yellow);
@@ -162,12 +163,29 @@ html, body {
     transition: opacity 0.3s ease-in-out;
 }
 
+.add_button {
+    height: 70px;
+    background-color: var(--yellow);
+    border: 0.1em solid rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.add_button:hover{
+    background-color: black;
+}
+
+
 .dropdown-menu {
     position: fixed;
     left: -250px;
     top: 0;
-    height: 100vh;
+    height: 47vh;
     width: 250px;
+    border: 0.1em solid rgb(0, 0, 0);
     background-color: var(--white);
     transition: left 0.3s ease-in-out;
 }

@@ -34,9 +34,8 @@ class CartController {
 
     static async getCart(req, res) {
         try {
-            console.log('Рендеринг корзины...'); 
             const cart = await CartService.getCart();
-            const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+            const totalPrice = await CartService.getTotalPrice();
 
             res.render('cart', { 
                 cartItems: cart, 
