@@ -1,78 +1,169 @@
 import AuthService from '../services/AuthService.js';
 
 class AuthController {
+    // Показ формы регистрации
     static showRegistrationForm(req, res) {
-        res.render('register.hbs', { title: 'Регистрация' });
+        res.render('register', {
+            title: 'Регистрация',
+            isAuthenticated: !!req.session.user,
+            user: req.session.user
+        });
     }
 
-  
+    // Показ формы входа
     static showLoginForm(req, res) {
-        res.render('enter.hbs', { title: 'Вход' });
+        res.render('enter', {
+            title: 'Вход',
+            isAuthenticated: !!req.session.user,
+            user: req.session.user,
+            error: req.query.error
+        });
     }
 
+    // Обработка регистрации
     static async register(req, res) {
         try {
-            console.log('Полученные данные:', req.body); 
+            const { password, confirmPassword, role, ...userData } = req.body;
+            const formData = req.body;
     
-            const { name, username, email, password, confirmPassword, phone, age, role } = req.body;
-    
-            if (!phone || !age) {
-                return res.status(400).json({ error: 'Телефон и возраст обязательны для заполнения.' });
-            }
-    
+            // Валидация паролей
             if (password !== confirmPassword) {
-                return res.status(400).json({ error: 'Пароли не совпадают' });
+                return res.render('register', {
+                    error: 'Пароли не совпадают',
+                    formData
+                });
             }
     
-
-            const hashedPassword = await AuthService.hashPassword(password);
+            // Проверка существования пользователя
+            const existingUser = await AuthService.findUserByUsername(formData.username);
+            if (existingUser) {
+                return res.render('register', {
+                    error: 'Пользователь с таким именем уже существует',
+                    formData
+                });
+            }
     
-            const newUser  = await AuthService.register({
-                name,
-                username,
-                email,
-                password: hashedPassword,
-                phone, 
-                age,   
-                role
+            // Создание пользователя
+            const user = await AuthService.registerUser({
+                ...userData,
+                password,
+                role: parseInt(role) || 1 // По умолчанию "Пользователь"
             });
     
-            res.status(201).json({ message: 'Пользователь успешно зарегистрирован', user: newUser  });
-        } catch (error) {
-            console.error('Ошибка при регистрации пользователя:', error);
-            res.status(500).json({ error: error.message });
-        }
-    }
-
-    static async login(req, res) {
-        try {
-            const { username, password } = req.body;
-    
-            const user = await AuthService.findUserByUsername(username);
-    
-            if (!user) {
-                return res.status(401).json({ error: 'Пользователь не найден' });
-            }
-
-            const isPasswordValid = await AuthService.comparePasswords(password, user.password);
-    
-            if (!isPasswordValid) {
-                return res.status(401).json({ error: 'Неверный пароль' });
-            }
-
-            const userData = {
+            // Автоматический вход после регистрации
+            req.session.user = {
                 id: user.id,
-                name: user.name,
                 username: user.username,
                 email: user.email,
                 role: user.role
             };
     
-            res.status(200).json({ message: 'Вход выполнен успешно', user: userData });
+            return res.redirect('/');
+    
         } catch (error) {
-            console.error('Ошибка при входе:', error);
-            res.status(500).json({ error: error.message });
+            console.error('Registration error:', error);
+            return res.render('register', {
+                error: 'Ошибка регистрации: ' + error.message,
+                formData: req.body
+            });
         }
     }
+
+    // Обработка входа
+    static async login(req, res) {
+        try {
+            const { username, password } = req.body;
+            
+            // Для API-запросов (fetch)
+            if (req.accepts('json')) {
+                const user = await AuthService.findUserByUsername(username);
+                
+                if (!user) {
+                    return res.status(401).json({ error: 'Неверный логин или пароль' });
+                }
+    
+                const isMatch = await AuthService.comparePasswords(password, user.password);
+                if (!isMatch) {
+                    return res.status(401).json({ error: 'Неверный логин или пароль' });
+                }
+    
+                req.session.user = {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role
+                };
+    
+                return res.json({ success: true });
+            }
+    
+            // Для обычных form-запросов
+            const user = await AuthService.findUserByUsername(username);
+            
+            if (!user) {
+                return res.render('enter', { 
+                    error: 'Неверный логин или пароль',
+                    username
+                });
+            }
+    
+            const isMatch = await AuthService.comparePasswords(password, user.password);
+            if (!isMatch) {
+                return res.render('enter', { 
+                    error: 'Неверный логин или пароль',
+                    username
+                });
+            }
+    
+            req.session.user = {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            };
+    
+            return res.redirect('/');
+    
+        } catch (error) {
+            console.error('Login error:', error);
+            
+            if (req.accepts('json')) {
+                return res.status(500).json({ error: 'Ошибка сервера' });
+            }
+            
+            return res.render('enter', {
+                error: 'Ошибка сервера при входе',
+                username: req.body.username
+            });
+        }
+    }
+    // Выход
+    static logout(req, res) {
+        req.session.destroy(err => {
+            if (err) {
+                console.error('Logout error:', err);
+            }
+            res.redirect('/');
+        });
+    }
+
+    // Middleware для проверки аутентификации
+    static requireAuth(req, res, next) {
+        if (req.session.user) {
+            return next();
+        }
+        res.redirect('/auth/login');
+    }
+
+    // Middleware для проверки ролей
+    static requireRole(role) {
+        return (req, res, next) => {
+            if (req.session.user?.role === role) {
+                return next();
+            }
+            res.status(403).send('Доступ запрещен');
+        };
+    }
 }
+
 export default AuthController;

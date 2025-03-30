@@ -3,81 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Корзина</title>
+    <title>Корзина | Бургер Хаус</title>
     <link rel="stylesheet" href="/stylesheets/cart_style.css">
+    <style>
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--yellow);
+            color: var(--main-color);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .quantity-btn:hover {
+            background-color: #ffd700;
+        }
+        
+        .quantity-value {
+            min-width: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Корзина</h1>
-        <div class="cart">
-            <ul id="cart-items">
-                {{#if cartItems.length}}
-                    {{#each cartItems}}
-                        <li>
-                            {{this.name}} - {{this.quantity}} x {{this.price}} руб.
-                            <button class="remove-item" data-id="{{this.id}}">Удалить</button>
-                        </li>
-                    {{/each}}
-                {{else}}
-                    <li>Корзина пуста</li>
-                {{/if}}
-            </ul>
-            <div class="cart-total">
-                <strong>Итого: </strong>
-                <span id="cart-total-price">{{totalPrice}} руб.</span>
-            </div>
+        <h1>Ваша корзина</h1>
+        
+        {{#if error}}
+            <div class="error-message">{{error}}</div>
+        {{/if}}
+
+        <div class="cart-content">
+            {{#if cartItems.length}}
+                <ul class="cart-items">
+               {{#each cartItems}}
+                <li class="cart-item">
+                    <span class="item-name">{{this.name}}</span>
+                    
+                    <div class="quantity-control">
+                        <form action="/cart/update" method="POST" class="quantity-form">
+                            <input type="hidden" name="dishId" value="{{this.dishId}}">
+                            <input type="hidden" name="quantity" value="{{this.quantity}}">
+                            <button type="submit" name="action" value="decrease" class="quantity-btn minus">-</button>
+                        </form>
+                        
+                        <span class="quantity-value">{{this.quantity}}</span>
+                        
+                        <form action="/cart/update" method="POST" class="quantity-form">
+                            <input type="hidden" name="dishId" value="{{this.dishId}}">
+                            <input type="hidden" name="quantity" value="{{this.quantity}}">
+                            <button type="submit" name="action" value="increase" class="quantity-btn plus">+</button>
+                        </form>
+                    </div>
+                    
+                    <span class="item-price">{{this.price}} ₽</span>
+                    <span class="item-total">{{this.total}} ₽</span>
+                    
+                    <form action="/cart/remove" method="POST" class="remove-form">
+                        <input type="hidden" name="dishId" value="{{this.dishId}}">
+                        <button type="submit" class="remove-btn">×</button>
+                    </form>
+                </li>
+            {{/each}}
+                </ul>
+                
+                <div class="cart-footer">
+                    <div class="total-price">Итого: {{totalPrice}} ₽</div>
+                    <div class="cart-actions">
+                        <a href="/" class="continue-btn">← Продолжить покупки</a>
+                        <form action="/order/create" method="POST">
+                            <button type="submit" class="checkout-btn">Оформить заказ</button>
+                        </form>
+                    </div>
+                </div>
+            {{else}}
+                <div class="empty-cart">
+                    <p>Ваша корзина пуста</p>
+                    <a href="/" class="continue-btn">Вернуться в меню</a>
+                </div>
+            {{/if}}
         </div>
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const cartItems = document.getElementById('cart-items');
-        const cartTotalPrice = document.getElementById('cart-total-price');
-
-        function fetchCart() {
-            // Получаем данные из localStorage
-            return JSON.parse(localStorage.getItem('cart')) || [];
-        }
-
-        function updateCart() {
-            const cart = fetchCart();
-            cartItems.innerHTML = '';
-            let totalPrice = 0;
-
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<li>Корзина пуста</li>';
-                cartTotalPrice.textContent = '0 руб.';
-                return;
-            }
-
-            cart.forEach(item => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    ${item.name} - ${item.quantity} x ${item.price} руб.
-                    <button class="remove-item" data-id="${item.id}">Удалить</button>
-                `;
-                cartItems.appendChild(li);
-                totalPrice += item.price * item.quantity;
+    <script>
+        // Обработка изменения количества
+        document.querySelectorAll('.quantity-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const dishId = this.getAttribute('data-id');
+                const isPlus = this.classList.contains('plus');
+                const quantityElement = this.parentElement.querySelector('.quantity-value');
+                let quantity = parseInt(quantityElement.textContent);
+                
+                if (isPlus) {
+                    quantity++;
+                } else {
+                    if (quantity > 1) quantity--;
+                    else return; // Не позволяем уменьшить ниже 1
+                }
+                
+                try {
+                    const response = await fetch('/cart/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            dishId: dishId,
+                            quantity: quantity
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        quantityElement.textContent = result.newQuantity;
+                        
+                        // Обновляем общую сумму
+                        document.querySelector('.total-price').textContent = `Итого: ${result.newTotalPrice} ₽`;
+                        
+                        // Обновляем сумму для конкретного товара
+                        const itemTotal = this.closest('.cart-item').querySelector('.item-total');
+                        itemTotal.textContent = `${result.itemTotal} ₽`;
+                    }
+                } catch (error) {
+                    console.error('Ошибка обновления количества:', error);
+                }
             });
-            cartTotalPrice.textContent = `${totalPrice} руб.`;
-        }
-
-        function removeItem(id) {
-            const cart = fetchCart();
-            const updatedCart = cart.filter(item => item.id !== id);
-            localStorage.setItem('cart', JSON.stringify(updatedCart));
-            updateCart(); 
-        }
-
-        cartItems.addEventListener('click', (event) => {
-            if (event.target.classList.contains('remove-item')) {
-                const itemId = event.target.dataset.id;
-                removeItem(itemId);
-            }
         });
-
-        updateCart();
-    });
-</script>
+    </script>
 </body>
 </html>

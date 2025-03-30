@@ -11,6 +11,5 @@ router.put('/:id', DishController.updateDish);
 router.delete('/:id', DishController.deleteDish); 
 
 router.get('/menu', DishController.renderMenu);
-router.get('/menu/auth', DishController.renderMenuForAuthUser); 
 
 export default router;

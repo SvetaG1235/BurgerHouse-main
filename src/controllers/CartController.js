@@ -1,51 +1,83 @@
 import CartService from '../services/CartService.js';
 
 class CartController {
-    static async addToCart(req, res) {
+    async addToCart(req, res) {
         try {
-            const { dishId, quantity } = req.body;
-            const item = await CartService.addToCart(dishId, quantity);
-            res.status(201).json(item);
-        } catch (error) {
-            res.status(400).json({ error: error.message });
-        }
-    }
-
-    static async removeFromCart(req, res) {
-        try {
-            const { dishId } = req.params;
-            await CartService.removeFromCart(dishId);
-            res.status(204).send();
-        } catch (error) {
-            res.status(404).json({ error: error.message });
-        }
-    }
-
-    static async updateQuantity(req, res) {
-        try {
-            const { dishId } = req.params;
-            const { quantity } = req.body;
-            const item = await CartService.updateQuantity(dishId, quantity);
-            res.status(200).json(item);
-        } catch (error) {
-            res.status(400).json({ error: error.message });
-        }
-    }
-
-    static async getCart(req, res) {
-        try {
-            const cart = await CartService.getCart();
-            const totalPrice = await CartService.getTotalPrice();
-
-            res.render('cart', { 
-                cartItems: cart, 
-                totalPrice: totalPrice 
+            const { dishId } = req.body;
+            await CartService.addToCart(dishId, 1);
+            
+            // Возвращаем JSON с обновленными данными
+            const cartCount = await CartService.getCartCount();
+            res.json({
+                success: true,
+                cartCount: cartCount,
+                dishId: dishId
             });
         } catch (error) {
-            console.error('Ошибка при рендеринге корзины:', error); 
-            res.status(500).render('error', { error: error.message });
+            res.status(400).json({ 
+                error: error.message 
+            });
+        }
+    }
+    async showCart(req, res) {
+        try {
+            const cartData = await CartService.getFullCartData();
+            const totalPrice = cartData.reduce((sum, item) => sum + item.total, 0);
+            
+            res.render('cart', {
+                cartItems: cartData,
+                totalPrice: totalPrice,
+                error: req.query.error
+            });
+        } catch (error) {
+            console.error('Error showing cart:', error);
+            res.render('cart', {
+                cartItems: [],
+                totalPrice: 0,
+                error: 'Ошибка загрузки корзины'
+            });
+        }
+    }
+
+    async removeItem(req, res) {
+        try {
+            const { dishId } = req.body;
+            await CartService.removeFromCart(dishId);
+            res.redirect('/cart');
+        } catch (error) {
+            console.error('Ошибка удаления:', error);
+            res.redirect(`/cart?error=${encodeURIComponent(error.message)}`);
+        }
+    }
+
+    async updateQuantity(req, res) {
+        try {
+            const { dishId, action } = req.body;
+            const item = await Cart.findOne({ where: { dishId } });
+            
+            if (!item) throw new Error('Товар не найден в корзине');
+            
+            if (action === 'increase') {
+                item.quantity += 1;
+            } else if (action === 'decrease') {
+                item.quantity = Math.max(item.quantity - 1, 1);
+            }
+            
+            await item.save();
+            
+            // Возвращаем обновленные данные
+            const cartCount = await CartService.getCartCount();
+            res.json({
+                success: true,
+                newQuantity: item.quantity,
+                cartCount: cartCount
+            });
+        } catch (error) {
+            res.status(400).json({ 
+                error: error.message 
+            });
         }
     }
 }
 
-export default CartController;
+export default new CartController();

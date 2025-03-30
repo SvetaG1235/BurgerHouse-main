@@ -68,16 +68,6 @@ class DishController {
         }
     }
     
-    static async renderMenuForAuthUser(req, res) {
-        try {
-            const dishes = await DishService.getAllDishes();
-            console.log('Данные для шаблона (авторизованный):', dishes); // Логирование
-            console.log(1111111)
-           res.render('Web-App-BH-entered.hbs', { dishes });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    }
 }
 
 export default DishController;

@@ -1,11 +1,11 @@
 import express from 'express';
-import CartController from '../controllers/CartController.js';
+import cartController from '../controllers/CartController.js';
 
 const router = express.Router();
 
-router.post('/', CartController.addToCart);
-router.delete('/:dishId', CartController.removeFromCart);
-router.put('/:dishId', CartController.updateQuantity);
-router.get('/', CartController.getCart);
+router.post('/add', cartController.addToCart);
+router.get('/', cartController.showCart);
+router.post('/update', cartController.updateQuantity);
+router.post('/remove', cartController.removeItem);
 
 export default router;

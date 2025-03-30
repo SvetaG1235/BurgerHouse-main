@@ -2,6 +2,7 @@ import sequelizeDB from "../db.js";
 import {Sequelize} from "sequelize";
 import { DataTypes } from "sequelize";
 import app from '../app.js'
+import Cart from "./CartModel.js";
 
 const Dish = sequelizeDB.define("Dish", {
     id: {
@@ -30,5 +31,11 @@ const Dish = sequelizeDB.define("Dish", {
         allowNull: false,
     },
 });
+
+Dish.hasMany(Cart, {
+    foreignKey: 'dishId',
+    as: 'Carts'
+});
+
 export default Dish
 
