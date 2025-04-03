@@ -1,26 +1,42 @@
-import sequelizeDB from "../db.js";
-import {Sequelize} from "sequelize";
+import { DataTypes } from 'sequelize';
+import sequelizeDB from '../db.js';
 
-const OrderModels = sequelizeDB.define("Order", {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+const Order = sequelizeDB.define('Order', {
+    userId: {
+        type: DataTypes.INTEGER,
         allowNull: false
     },
-    dish_category: {
-        type: Sequelize.STRING,
+    address: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    calories: {
-        type: Sequelize.INTEGER,
+    phone: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    price: {
-        type: Sequlize.INTEGER,
+    paymentMethod: {
+        type: DataTypes.ENUM('card', 'cash'),
         allowNull: false
+    },
+    total: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+    },
+    notes: {
+        type: DataTypes.TEXT
+    },
+    status: {
+        type: DataTypes.ENUM(
+            'processing',
+            'shipped',
+            'delivered',
+            'cancelled'
+        ),
+        defaultValue: 'processing'
     }
-    
-})
+}, {
+    tableName: 'orders',
+    timestamps: true
+});
 
-export default Order
+export default Order;

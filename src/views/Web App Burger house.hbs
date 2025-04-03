@@ -46,8 +46,8 @@
                                         <span class="calories">{{this.calories}} ккал</span>
                                         <span class="price">{{this.price}} ₽</span>
                                     </div>
-                                   {{#if ../isAuthenticated}}
-                                    {{#if (lookup ../cartItems this.id)}}
+                                        {{#if isAuthenticated}}
+                                            {{#if (lookup cartItems this.id)}}
                                             <div class="quantity-control">
                                                 <button class="quantity-btn minus" data-id="{{this.id}}">-</button>
                                                 <span class="quantity-value">{{lookup ../cartItems this.id}}</span>

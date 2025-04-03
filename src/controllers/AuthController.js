@@ -90,23 +90,33 @@ class AuthController {
                 });
             }
     
-            req.session.user = {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                role: user.role
-            };
-    
-            // Сохраняем сессию перед редиректом
-            req.session.save(err => {
+            req.session.regenerate(err => {
                 if (err) {
-                    console.error('Ошибка сохранения сессии:', err);
-                    return res.render('enter', {
+                    console.error('Session regenerate error:', err);
+                    return res.render('enter', { 
                         error: 'Ошибка сервера',
                         username
                     });
                 }
-                res.redirect('/');
+    
+                req.session.user = {
+                    id: user.id,
+                    username: user.username,
+                    name: user.name || user.username, // Важно!
+                    email: user.email,
+                    role: user.role
+                };
+    
+                req.session.save(err => {
+                    if (err) {
+                        console.error('Session save error:', err);
+                        return res.render('enter', { 
+                            error: 'Ошибка сервера',
+                            username
+                        });
+                    }
+                    res.redirect('/?_=' + Date.now()); // Добавляем timestamp
+                });
             });
     
         } catch (error) {
@@ -117,7 +127,6 @@ class AuthController {
             });
         }
     }
-
     
     // Выход
     static logout(req, res) {

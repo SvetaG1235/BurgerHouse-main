@@ -21,16 +21,15 @@ class CartController {
     }
     async showCart(req, res) {
         try {
-            const cartData = await CartService.getFullCartData();
-            const totalPrice = cartData.reduce((sum, item) => sum + item.total, 0);
+            const cartItems = await CartService.getFullCartData();
+            const totalPrice = await CartService.getTotalPrice(cartItems);
             
             res.render('cart', {
-                cartItems: cartData,
-                totalPrice: totalPrice,
+                cartItems,
+                totalPrice,
                 error: req.query.error
             });
         } catch (error) {
-            console.error('Error showing cart:', error);
             res.render('cart', {
                 cartItems: [],
                 totalPrice: 0,
@@ -38,7 +37,7 @@ class CartController {
             });
         }
     }
-
+    
     async removeItem(req, res) {
         try {
             const { dishId } = req.body;

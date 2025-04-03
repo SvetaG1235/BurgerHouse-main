@@ -8,6 +8,7 @@ import indexRouter from './routes/IndexRoutes.js';
 import authRouter from './routes/AuthRoutes.js';
 import cartRouter from './routes/CartRoutes.js';
 import dishRouter from './routes/DishRoutes.js';
+import orderRouter from './routes/OrderRoutes.js';
 
 const app = express();
 const __dirname = path.resolve();
@@ -26,7 +27,7 @@ app.use(session({
 
 app.use((req, res, next) => {
     res.locals.isAuthenticated = !!req.session.user;
-    res.locals.currentUser = req.session.user;
+    res.locals.user = req.session.user || null;
     next();
 });
 
@@ -39,6 +40,7 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/cart', cartRouter);
 app.use('/dishes', dishRouter);
+app.use('/order', orderRouter)
 
 const syncDatabase = async () => {
     try {

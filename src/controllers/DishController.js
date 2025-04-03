@@ -60,7 +60,6 @@ class DishController {
         try {
             const dishes = await DishService.getAllDishes();
             
-            // Группируем блюда по категориям
             const menuData = {};
             dishes.forEach(dish => {
                 if (!menuData[dish.dish_category]) {
@@ -69,23 +68,30 @@ class DishController {
                 menuData[dish.dish_category].push(dish);
             });
     
-            // Данные корзины
             let cartItems = {};
+            let cartCount = 0;
+            
             if (req.session.user) {
-                const cartData = await CartService.getFullCartData(req.session.user.id);
-                cartData.forEach(item => {
-                    cartItems[item.dishId] = item.quantity;
-                });
+                try {
+                    const cartData = await CartService.getFullCartData(req.session.user.id);
+                    cartData.forEach(item => {
+                        cartItems[item.dishId] = item.quantity;
+                    });
+                    cartCount = await CartService.getCartCount(req.session.user.id);
+                } catch (error) {
+                    console.error('Cart service error:', error);
+                }
             }
     
             res.render('Web App Burger house', {
                 menuData: Object.entries(menuData),
-                cartItems,
+                cartItems: cartItems || {}, // Гарантируем что cartItems всегда объект
                 isAuthenticated: !!req.session.user,
-                user: req.session.user,
-                cartCount: req.session.user ? await CartService.getCartCount(req.session.user.id) : 0
+                user: req.session.user || null, // Гарантируем что user всегда определен
+                cartCount: cartCount
             });
         } catch (error) {
+            console.error('Menu render error:', error);
             res.status(500).render('error', { message: 'Ошибка загрузки меню' });
         }
     }

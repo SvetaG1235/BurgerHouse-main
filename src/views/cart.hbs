@@ -82,11 +82,11 @@
                 <div class="cart-footer">
                     <div class="total-price">Итого: {{totalPrice}} ₽</div>
                     <div class="cart-actions">
-                        <a href="/" class="continue-btn">← Продолжить покупки</a>
-                        <form action="/order/create" method="POST">
-                            <button type="submit" class="checkout-btn">Оформить заказ</button>
-                        </form>
-                    </div>
+                    <a href="/" class="continue-btn">← Продолжить покупки</a>
+                    {{#if cartItems.length}}
+                        <a href="/order/checkout" class="checkout-btn">Оформить заказ</a>
+                    {{/if}}
+                </div>
                 </div>
             {{else}}
                 <div class="empty-cart">
