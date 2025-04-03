@@ -73,31 +73,6 @@ class AuthController {
     static async login(req, res) {
         try {
             const { username, password } = req.body;
-            
-            // Для API-запросов (fetch)
-            if (req.accepts('json')) {
-                const user = await AuthService.findUserByUsername(username);
-                
-                if (!user) {
-                    return res.status(401).json({ error: 'Неверный логин или пароль' });
-                }
-    
-                const isMatch = await AuthService.comparePasswords(password, user.password);
-                if (!isMatch) {
-                    return res.status(401).json({ error: 'Неверный логин или пароль' });
-                }
-    
-                req.session.user = {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    role: user.role
-                };
-    
-                return res.json({ success: true });
-            }
-    
-            // Для обычных form-запросов
             const user = await AuthService.findUserByUsername(username);
             
             if (!user) {
@@ -122,21 +97,28 @@ class AuthController {
                 role: user.role
             };
     
-            return res.redirect('/');
+            // Сохраняем сессию перед редиректом
+            req.session.save(err => {
+                if (err) {
+                    console.error('Ошибка сохранения сессии:', err);
+                    return res.render('enter', {
+                        error: 'Ошибка сервера',
+                        username
+                    });
+                }
+                res.redirect('/');
+            });
     
         } catch (error) {
             console.error('Login error:', error);
-            
-            if (req.accepts('json')) {
-                return res.status(500).json({ error: 'Ошибка сервера' });
-            }
-            
             return res.render('enter', {
                 error: 'Ошибка сервера при входе',
                 username: req.body.username
             });
         }
     }
+
+    
     // Выход
     static logout(req, res) {
         req.session.destroy(err => {

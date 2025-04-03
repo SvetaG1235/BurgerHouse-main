@@ -1,12 +1,12 @@
 import DishService from '../services/DishService.js';
 
 class DishController {
-    static async getAllDishes(req, res) {
+    static async getAllDishes() {  
         try {
             const dishes = await DishService.getAllDishes();
-            res.status(200).json(dishes);
+            return dishes;  
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            throw error;  
         }
     }
 
@@ -55,19 +55,39 @@ class DishController {
         }
     }
 
+        
     static async renderMenu(req, res) {
         try {
             const dishes = await DishService.getAllDishes();
-            console.log('Данные для шаблона:', dishes); // Логирование
             
-            console.log('ок')
-            
-            res.render('Web App Burger house.hbs', { dishes });
+            // Группируем блюда по категориям
+            const menuData = {};
+            dishes.forEach(dish => {
+                if (!menuData[dish.dish_category]) {
+                    menuData[dish.dish_category] = [];
+                }
+                menuData[dish.dish_category].push(dish);
+            });
+    
+            // Данные корзины
+            let cartItems = {};
+            if (req.session.user) {
+                const cartData = await CartService.getFullCartData(req.session.user.id);
+                cartData.forEach(item => {
+                    cartItems[item.dishId] = item.quantity;
+                });
+            }
+    
+            res.render('Web App Burger house', {
+                menuData: Object.entries(menuData),
+                cartItems,
+                isAuthenticated: !!req.session.user,
+                user: req.session.user,
+                cartCount: req.session.user ? await CartService.getCartCount(req.session.user.id) : 0
+            });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).render('error', { message: 'Ошибка загрузки меню' });
         }
     }
-    
 }
-
 export default DishController;

@@ -4,7 +4,6 @@ class DishService {
     static async getAllDishes() {
         try {
             const dishes = await Dish.findAll();
-            console.log('Извлеченные блюда:', JSON.stringify(dishes, null, 2)); 
             return dishes;
         } catch (error) {
             throw new Error(`Ошибка при получении блюд: ${error.message}`);

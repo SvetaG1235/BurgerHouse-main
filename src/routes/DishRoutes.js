@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/getAllDishes', DishController.getAllDishes); 
 router.post('/', DishController.addDish); 
-router.post('/bulk', DishController.addAllDishes); 
+router.post('/addAllDishes', DishController.addAllDishes); 
 router.get('/:id', DishController.getDishById); 
 router.put('/:id', DishController.updateDish);
 router.delete('/:id', DishController.deleteDish); 

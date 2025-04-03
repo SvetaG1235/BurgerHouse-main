@@ -3,8 +3,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import session from 'express-session';
-import sequelizeDB from './db.js'; 
-
+import sequelizeDB from './db.js';
 import indexRouter from './routes/IndexRoutes.js';
 import authRouter from './routes/AuthRoutes.js';
 import cartRouter from './routes/CartRoutes.js';
@@ -18,14 +17,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Настройка сессии
 app.use(session({
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }
 }));
-
 
 app.use((req, res, next) => {
     res.locals.isAuthenticated = !!req.session.user;

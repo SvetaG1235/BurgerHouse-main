@@ -5,6 +5,7 @@
     --price-color: rgb(205, 180, 130);
 }
 
+/* Базовые стили */
 html, body {
     margin: 0;
     padding: 0;
@@ -12,77 +13,261 @@ html, body {
     width: 100%;
     min-height: 100vh;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-color: var(--main-color);
+    color: var(--main-color);
 }
 
 .main {
-    display: grid;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    background-color: var(--main-color);
 }
 
+/* Шапка */
 .upline {
-    display: grid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
     height: 17vh;
     background-color: var(--main-color);
 }
 
-@media (max-width: 480px) {
-    .upline {
-        height: 10vh;
-    }
+#menu_button {
+    background-color: var(--yellow);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
-.maintext {
-    display: grid;
-    height: 30vh;
-    background-color: var(--main-color);
-}
-
-.switchmenu {
-    display: flex;
-    height: 60vh;
-    background-color: var(--white);
-    justify-content: space-around;
-    align-items: center;
-    overflow-x: scroll;
-}
-
-.stillmenu {
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    padding: 20px;
-    background-color: var(--main-color);
-    gap: 20px;
-    height: auto;
-}
-
-.stillmenu img {
-    width: 70vw; 
-    height: auto; 
-    object-fit: cover; 
-    border-radius: 10px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    cursor: pointer; 
-    transition: transform 0.3s ease; 
-}
-
-.stillmenu img:hover {
+#menu_button:hover {
+    opacity: 0.9;
     transform: scale(1.05);
 }
 
-
-
-.modal {
-    display: none; 
+/* Выпадающее меню */
+.dropdown-menu {
     position: fixed;
+    left: -250px;
+    top: 0;
+    height: 100vh;
+    width: 250px;
+    background-color: var(--white);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    transition: left 0.3s ease-in-out;
     z-index: 1000;
+    padding-top: 20px;
+}
+
+.dropdown-menu a {
+    color: var(--main-color);
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    transition: background 0.2s;
+}
+
+.dropdown-menu a:hover {
+    background-color: var(--yellow);
+}
+
+.dropdown-menu.show {
+    left: 0;
+}
+
+.user-greeting {
+    padding: 12px 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+/* Основной контент */
+.maintext {
+    padding: 20px;
+    text-align: center;
+}
+
+.maintext h1 {
+    color: var(--yellow);
+    margin: 0;
+    font-size: 2.2rem;
+}
+
+/* Меню с блюдами */
+.switchmenu {
+    flex: 1;
+    padding: 20px;
+    background-color: var(--main-color); /* Теперь черный фон */
+    overflow-y: auto;
+}
+
+.category-section {
+    margin-bottom: 30px;
+    border: 2px solid var(--yellow); /* Желтая рамка */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.category-title {
+    color: var(--yellow);
+    background-color: var(--main-color);
+    padding: 12px 20px;
+    margin: 0;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--yellow);
+}
+
+.category-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный черный */
+}
+
+.dish-card {
+    background: rgba(28, 27, 23, 0.9); /* Темный фон с легкой прозрачностью */
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    border-left: 3px solid var(--yellow); /* Акцентная полоса */
+}
+
+.dish-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(255, 205, 10, 0.2);
+}
+
+.dish-info h3 {
+    margin: 0 0 12px 0;
+    color: var(--white);
+    font-size: 1.3rem;
+}
+
+.description {
+    color: #bbb; /* Светло-серый для лучшей читаемости */
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+}
+
+.calories {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.price {
+    font-weight: bold;
+    color: var(--yellow);
+    font-size: 1.2rem;
+}
+
+/* Обновленные кнопки */
+.add-to-cart {
+    width: 100%;
+    padding: 12px;
+    background: var(--yellow);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--main-color);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.add-to-cart:hover {
+    background: #ffd700;
+    transform: translateY(-2px);
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.quantity-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #333;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--yellow);
+    transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background: #444;
+}
+
+.quantity-value {
+    min-width: 24px;
+    text-align: center;
+    color: var(--white);
+    font-weight: bold;
+}
+
+.auth-required {
+    color: #999;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 10px 0;
+    border-top: 1px solid #333;
+    margin-top: 15px;
+}
+
+/* Галерея внизу */
+.stillmenu {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: var(--main-color);
+}
+
+.stillmenu img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.stillmenu img:hover {
+    transform: scale(1.03);
+}
+
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9); 
+    background-color: rgba(0,0,0,0.9);
     justify-content: center;
     align-items: center;
 }
@@ -90,17 +275,18 @@ html, body {
 .modal-content {
     max-width: 90%;
     max-height: 90%;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .close {
     position: absolute;
-    top: 20px;
-    right: 35px;
+    top: 30px;
+    right: 30px;
     color: white;
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.2s;
 }
 
 .close:hover {
@@ -113,188 +299,100 @@ html, body {
     top: 50%;
     width: auto;
     padding: 16px;
-    margin-top: -22px;
     color: white;
     font-weight: bold;
     font-size: 24px;
-    transition: 0.3s;
+    transition: color 0.2s;
 }
 
 .next {
-    right: 0;
+    right: 20px;
 }
 
 .prev {
-    left: 0;
+    left: 20px;
 }
 
 .prev:hover, .next:hover {
     color: var(--yellow);
 }
 
-#h1 {
-    color: var(--yellow);
-}
-
-.meats {
-    display: flex;
-    width: 100vw;
-    height: 10vh;
-    background-color: var(--price-color);
-}
-
-.burgers {
-    display: flex;
-    flex-direction: column;
-    height: 45vh;
-    width: 50vw;
-    background-color: var(--yellow);
-    flex-shrink: 0;
-    margin-right: 10px;
-}
-
-#menu_button {
-    background-color: var(--yellow);
-    background-image: url('/images/logo.png');
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.add_button {
-    height: 70px;
-    background-color: var(--yellow);
-    border: 0.1em solid rgb(0, 0, 0);
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.add_button:hover{
-    background-color: black;
-}
-
-
-.dropdown-menu {
+/* Уведомления */
+.notification {
     position: fixed;
-    left: -250px;
-    top: 0;
-    height: 47vh;
-    width: 250px;
-    border: 0.1em solid rgb(0, 0, 0);
-    background-color: var(--white);
-    transition: left 0.3s ease-in-out;
-}
-
-.dropdown-menu a {
-    color: var(--main-color);
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-menu a:hover {
+    bottom: 20px;
+    right: 20px;
     background-color: var(--yellow);
-}
-
-.dropdown-menu.show {
-    left: 0;
-}
-
-.dropdown-menu.show ~ .upline #menu_button {
+    color: var(--main-color);
+    padding: 15px 25px;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(100px);
     opacity: 0;
-    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    font-weight: bold;
 }
 
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
 
-/* Стили для уведомлений */
-       
- .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--yellow);
-            color: var(--main-color);
-            padding: 15px 25px;
-            border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            font-weight: bold;
-        }
+.notification-close {
+    margin-left: 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
 
-        .notification.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
+/* Анимации */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-8px);}
+    60% {transform: translateY(-4px);}
+}
 
-        .notification-close {
-            margin-left: 15px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+.add_button.added {
+    animation: bounce 0.6s;
+}
 
-        /* Анимация кнопки */
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-8px);}
-            60% {transform: translateY(-4px);}
-        }
+.cart-counter {
+    background-color: var(--yellow);
+    color: var(--main-color);
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
 
-        .add_button.added {
-            animation: bounce 0.6s;
-            background-color: var(--yellow);
-            color: var(--main-color);
-        }
+/* Адаптивность */
+@media (max-width: 768px) {
+    .upline {
+        height: 12vh;
+    }
+    
+    .category-items {
+        grid-template-columns: 1fr;
+    }
+    
+    .stillmenu {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
 
-        /* Счетчик корзины */
-        .cart-counter {
-            background-color: var(--yellow);
-            color: var(--main-color);
-            border-radius: 50%;
-            padding: 2px 8px;
-            font-size: 0.9em;
-            margin-left: 5px;
-        }
-
-        /* Стили для управления количеством */
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .quantity-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: none;
-            background-color: var(--yellow);
-            color: var(--main-color);
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .quantity-btn:hover {
-            background-color: #ffd700;
-        }
-
-        .quantity-value {
-            min-width: 20px;
-            text-align: center;
-            font-weight: bold;
-        }
+@media (max-width: 480px) {
+    .upline {
+        height: 10vh;
+    }
+    
+    .maintext h1 {
+        font-size: 1.8rem;
+    }
+    
+    .dropdown-menu {
+        width: 200px;
+    }
+}
