@@ -33,40 +33,28 @@
         </div>
 
         <div class="switchmenu">
-            {{#each menuData}}
-                <div class="category-section">
-                    <h2 class="category-title">{{this.[0]}}</h2>
-                    <div class="category-items">
-                        {{#each this.[1]}}
-                            <div class="dish-card">
-                                <div class="dish-info">
-                                    <h3>{{this.name}}</h3>
-                                    <p class="description">{{this.description}}</p>
-                                    <div class="details">
-                                        <span class="calories">{{this.calories}} ккал</span>
-                                        <span class="price">{{this.price}} ₽</span>
-                                    </div>
-                                        {{#if isAuthenticated}}
-                                            {{#if (lookup cartItems this.id)}}
-                                            <div class="quantity-control">
-                                                <button class="quantity-btn minus" data-id="{{this.id}}">-</button>
-                                                <span class="quantity-value">{{lookup ../cartItems this.id}}</span>
-                                                <button class="quantity-btn plus" data-id="{{this.id}}">+</button>
-                                            </div>
-                                        {{else}}
-                                            <button class="add-to-cart" data-id="{{this.id}}">Добавить в корзину</button>
-                                        {{/if}}
-                                    {{else}}
-                                        <p class="auth-required">Авторизуйтесь, чтобы добавить в корзину</p>
-                                    {{/if}}
-                                </div>
+    {{#each menuData}}
+        <div class="category-section">
+            <h2 class="category-title">{{this.[0]}}</h2>
+            <div class="category-items">
+                {{#each this.[1]}}
+                    <div class="dish-card">
+                        <div class="dish-info">
+                            <h3>{{this.name}}</h3>
+                            <p class="description">{{this.description}}</p>
+                            <div class="details">
+                                <span class="calories">{{this.calories}} ккал</span>
+                                <span class="price">{{this.price}} ₽</span>
                             </div>
-                        {{/each}}
+                            <!-- Убрали проверку на аутентификацию -->
+                            <button class="add-to-cart" data-id="{{this.id}}" data-name="{{this.name}}">Добавить в корзину</button>
+                        </div>
                     </div>
-                </div>
-            {{/each}}
+                {{/each}}
+            </div>
         </div>
-
+    {{/each}}
+</div>
         <div class="stillmenu">
             <img src="/images/chickens.jpg" alt="Куриные бургеры">
             <img src="/images/goviadines.jpg" alt="Говяжьи бургеры">
@@ -163,140 +151,105 @@
         }
     }
 
-    // ===== Обработчик добавления в корзину =====
-    async function addToCartHandler(button) {
-        const dishId = button.getAttribute('data-id');
-        const dishName = button.getAttribute('data-name');
-        const burgersBlock = button.closest('.burgers');
-        
-        button.classList.add('added');
-        setTimeout(() => button.classList.remove('added'), 600);
-        
-        try {
-            const response = await fetch('/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    dishId: dishId,
-                    quantity: 1
-                }),
-                credentials: 'include'
-            });
+   // Обработчик добавления в корзину
+async function addToCartHandler(button) {
+    const dishId = button.getAttribute('data-id');
+    const dishName = button.getAttribute('data-name');
 
-            if (response.ok) {
-                const result = await response.json();
-                showNotification(`"${dishName}" добавлен в корзину!`);
-                
-                // Обновляем счетчик в меню
-                const counter = document.getElementById('cart-counter');
-                if (counter) {
-                    counter.textContent = result.cartCount;
-                }
-                
-                // Создаем новый блок управления количеством
-                const quantityControl = document.createElement('div');
-                quantityControl.className = 'quantity-control';
-                quantityControl.innerHTML = `
-                    <button class="quantity-btn minus" data-id="${dishId}">-</button>
-                    <span class="quantity-value">1</span>
-                    <button class="quantity-btn plus" data-id="${dishId}">+</button>
-                `;
-                
-                // Заменяем кнопку на блок управления
-                button.replaceWith(quantityControl);
-                
-                // Настраиваем обработчики для новых кнопок
-                setupQuantityControls(quantityControl);
-            } else {
-                const error = await response.json();
-                showNotification(error.message || 'Ошибка добавления');
+    try {
+        const response = await fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                dishId: dishId,
+                quantity: 1
+            }),
+            credentials: 'include' // Включаем куки для сессии
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            showNotification(`"${dishName}" добавлен в корзину!`);
+            // Обновляем счетчик в меню
+            const counter = document.getElementById('cart-counter');
+            if (counter) {
+                counter.textContent = result.cartCount;
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Ошибка соединения');
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка добавления');
         }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        showNotification('Ошибка соединения');
     }
+}
+
+// Назначаем обработчик события для кнопок "Добавить в корзину"
+const addToCartButtons = document.querySelectorAll('.add-to-cart');
+addToCartButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        addToCartHandler(this);
+    });
+});
 
     // ===== Обработчик изменения количества =====
     async function updateQuantityHandler(btn) {
-        const dishId = btn.getAttribute('data-id');
-        const isPlus = btn.classList.contains('plus');
-        const quantityElement = btn.parentElement.querySelector('.quantity-value');
-        const burgersBlock = btn.closest('.burgers');
-        const dishName = burgersBlock.querySelector('h2').textContent;
-        
-        try {
-            const response = await fetch('/cart/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    dishId: dishId,
-                    action: isPlus ? 'increase' : 'decrease'
-                }),
-                credentials: 'include'
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                
-                // Обновляем количество
-                quantityElement.textContent = result.newQuantity;
-                
-                // Обновляем счетчик в меню
-                const counter = document.getElementById('cart-counter');
-                if (counter) {
-                    counter.textContent = result.cartCount;
-                }
-                
-                // Если количество стало 0, возвращаем кнопку "Добавить"
-                if (result.newQuantity < 1) {
-                    const quantityControl = btn.closest('.quantity-control');
-                    const addButton = document.createElement('button');
-                    addButton.className = 'add_button';
-                    addButton.setAttribute('data-id', dishId);
-                    addButton.setAttribute('data-name', dishName);
-                    addButton.textContent = 'Добавить в корзину';
-                    addButton.addEventListener('click', function() {
-                        addToCartHandler(this);
-                    });
-                    
-                    quantityControl.replaceWith(addButton);
-                }
+    const dishId = btn.getAttribute('data-id');
+    const isPlus = btn.classList.contains('plus');
+    const quantityElement = btn.parentElement.querySelector('.quantity-value');
+
+    try {
+        const response = await fetch('/cart/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                dishId: dishId,
+                action: isPlus ? 'increase' : 'decrease'
+            }),
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            quantityElement.textContent = result.newQuantity;
+            // Обновляем счетчик в меню
+            const counter = document.getElementById('cart-counter');
+            if (counter) {
+                counter.textContent = result.cartCount;
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showNotification('Ошибка обновления количества');
+        } else {
+            const error = await response.json();
+            showNotification(error.message || 'Ошибка обновления количества');
         }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        showNotification('Ошибка соединения');
     }
+}
 
-    // ===== Настройка обработчиков для управления количеством =====
-    function setupQuantityControls(container) {
-        container.querySelectorAll('.quantity-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                updateQuantityHandler(this);
-            });
-        });
-    }
 
-    // ===== Инициализация обработчиков =====
-    document.querySelectorAll('.add_button').forEach(button => {
-        button.addEventListener('click', function() {
-            addToCartHandler(this);
-        });
+// Функция для обновления интерфейса после авторизации
+function updateInterfaceAfterLogin(user) {
+    // Обновите приветствие пользователя
+    document.querySelector('.user-greeting').textContent = `Привет, ${user.name}!`;
+    
+    // Скрыть текст "Авторизуйтесь, чтобы добавить в корзину"
+    const authRequiredTexts = document.querySelectorAll('.auth-required');
+    authRequiredTexts.forEach(text => {
+        text.style.display = 'none'; // Скрываем текст
     });
 
-    document.querySelectorAll('.quantity-control').forEach(control => {
-        setupQuantityControls(control);
+    // Найдите все кнопки "Добавить в корзину" и отобразите их
+    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.style.display = 'block'; // Показываем кнопку
     });
-
-    // Инициализация счетчика корзины при загрузке
-    document.addEventListener('DOMContentLoaded', function() {
-        updateCartCounter();
-    });
+}
 </script>
 </body>
 </html>

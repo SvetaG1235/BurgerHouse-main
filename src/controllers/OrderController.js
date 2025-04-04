@@ -19,9 +19,11 @@ class OrderController {
             res.render('order', {
                 cartItems,
                 totalPrice,
-                user: req.session.user
+                user: req.session.user,
+                error: req.query.error || null // Передаем ошибку, если есть
             });
         } catch (error) {
+            console.error('Ошибка при загрузке страницы оформления заказа:', error);
             res.redirect(`/cart?error=${encodeURIComponent(error.message)}`);
         }
     }
@@ -42,6 +44,10 @@ class OrderController {
             const cartItems = await CartService.getFullCartData();
             const totalPrice = await CartService.getTotalPrice(cartItems);
 
+            if (cartItems.length === 0) {
+                throw new Error('Корзина пуста');
+            }
+
             const orderData = {
                 userId: req.session.user.id,
                 address,
@@ -57,6 +63,7 @@ class OrderController {
 
             res.redirect('/order/success');
         } catch (error) {
+            console.error('Ошибка при создании заказа:', error);
             res.redirect(`/order/checkout?error=${encodeURIComponent(error.message)}`);
         }
     }
@@ -71,6 +78,7 @@ class OrderController {
             const orders = await OrderService.getUserOrders(req.session.user.id);
             res.render('order-history', { orders });
         } catch (error) {
+            console.error('Ошибка при загрузке истории заказов:', error);
             res.render('order-history', { 
                 orders: [],
                 error: 'Не удалось загрузить историю заказов'
@@ -93,7 +101,8 @@ class OrderController {
 
             res.render('order-details', { order });
         } catch (error) {
-            res.status(500).render('error', { 
+            console.error('Ошибка при загрузке заказа:', error);
+            res.status( 500).render('error', { 
                 message: 'Ошибка при загрузке заказа'
             });
         }

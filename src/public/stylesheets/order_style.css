@@ -1,10 +1,45 @@
+:root {
+    --main-color: rgb(28, 27, 23);
+    --white: rgb(254, 254, 252);
+    --yellow: rgb(255, 205, 10);
+    --price-color: rgb(205, 180, 130);
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    background-color: var(--main-color);
+    color: var(--white);
+}
+
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+
+.maintext h1 {
+    color: var(--yellow);
+    margin-bottom: 20px;
+}
+
+
 .order-container {
     padding: 20px;
-    background-color: var(--white);
-    color: var(--main-color);
+    background-color: rgba(28, 27, 23, 0.9); 
+    color: var(--white);
     max-width: 600px;
     margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
+
 
 .order-items {
     margin-bottom: 30px;
@@ -14,7 +49,7 @@
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .order-total {
@@ -25,6 +60,7 @@
     color: var(--yellow);
 }
 
+/* Формы */
 .form-group {
     margin-bottom: 20px;
 }
@@ -33,53 +69,11 @@
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
+    color: var(--white);
 }
 
 .form-group input, 
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-.payment-methods {
-    display: flex;
-    gap: 20px;
-    margin-top: 10px;
-}
-
-.payment-method {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.payment-method input {
-    width: auto;
-}
-
-.cash-group {
-    display: none;
-    margin-top: 15px;
-}
-
-.submit-btn {
-    background-color: var(--yellow);
-    color: var(--main-color);
-    border: none;
-    padding: 14px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    width: 100%;
-    font-weight: bold;
-    border-radius: 4px;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-}
-
-.submit-btn:hover {
-    background-color: #ffd700;
-}
+    border: 1px solid #ddd}

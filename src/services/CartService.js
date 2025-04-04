@@ -72,6 +72,10 @@ class CartService {
         await item.save();
         return item;
     }
+
+    static async clearCart() {
+        req.session.cart = [];
+    }
 }
 
 export default CartService;

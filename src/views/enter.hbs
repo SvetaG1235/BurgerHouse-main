@@ -18,7 +18,7 @@
                 <div class="alert alert-danger">{{error}}</div>
             {{/if}}
             
-            <form action="/auth/login" method="POST">
+            <form id="LoginForm"  action="/auth/login" method="POST">
                 <div class="form-group">
                     <input type="text" class="form-control" name="username" 
                            placeholder="Введите имя пользователя (логин)" 
@@ -49,26 +49,19 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
             body: JSON.stringify(data),
         });
 
-        // Обрабатываем ответ как JSON только если это действительно JSON
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const result = await response.json();
-            if (response.ok) {
-                window.location.href = '/';
-            } else {
-                alert(result.error || 'Ошибка при входе');
-            }
+        const result = await response.json();
+        if (response.ok) {
+            // Обновите интерфейс после успешной авторизации
+            updateInterfaceAfterLogin(result.user);
         } else {
-            // Если получили HTML (например при ошибке валидации)
-            const text = await response.text();
-            console.error('Ожидался JSON, но получили:', text);
-            alert('Произошла ошибка. Проверьте консоль для деталей.');
+            alert(result.message || 'Ошибка при входе');
         }
     } catch (error) {
         console.error('Ошибка:', error);
-        alert('Произошла ошибка при отправке запроса');
+        alert('Ошибка соединения');
     }
 });
+
 </script>
 
 </body>

@@ -25,7 +25,7 @@ class AuthController {
         try {
             const { password, confirmPassword, role, ...userData } = req.body;
             const formData = req.body;
-    
+
             // Валидация паролей
             if (password !== confirmPassword) {
                 return res.render('register', {
@@ -33,33 +33,25 @@ class AuthController {
                     formData
                 });
             }
-    
+
             // Проверка существования пользователя
-            const existingUser = await AuthService.findUserByUsername(formData.username);
-            if (existingUser) {
+            const existingUser  = await AuthService.findUserByUsername(formData.username);
+            if (existingUser ) {
                 return res.render('register', {
                     error: 'Пользователь с таким именем уже существует',
                     formData
                 });
             }
-    
+
             // Создание пользователя
-            const user = await AuthService.registerUser({
+            const user = await AuthService.registerUser ({
                 ...userData,
                 password,
                 role: parseInt(role) || 1 // По умолчанию "Пользователь"
             });
-    
-            // Автоматический вход после регистрации
-            req.session.user = {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                role: user.role
-            };
-    
-            return res.redirect('/');
-    
+
+            res.render('enter');
+
         } catch (error) {
             console.error('Registration error:', error);
             return res.render('register', {
@@ -81,7 +73,7 @@ class AuthController {
                     username
                 });
             }
-    
+
             const isMatch = await AuthService.comparePasswords(password, user.password);
             if (!isMatch) {
                 return res.render('enter', { 
@@ -89,7 +81,7 @@ class AuthController {
                     username
                 });
             }
-    
+
             req.session.regenerate(err => {
                 if (err) {
                     console.error('Session regenerate error:', err);
@@ -98,15 +90,15 @@ class AuthController {
                         username
                     });
                 }
-    
+
                 req.session.user = {
                     id: user.id,
                     username: user.username,
-                    name: user.name || user.username, // Важно!
+                    name: user.name || user.username, 
                     email: user.email,
                     role: user.role
                 };
-    
+
                 req.session.save(err => {
                     if (err) {
                         console.error('Session save error:', err);
@@ -115,10 +107,10 @@ class AuthController {
                             username
                         });
                     }
-                    res.redirect('/?_=' + Date.now()); // Добавляем timestamp
+                    res.redirect('/?_=' + Date.now()); 
                 });
             });
-    
+
         } catch (error) {
             console.error('Login error:', error);
             return res.render('enter', {
