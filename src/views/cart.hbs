@@ -98,12 +98,13 @@
     </div>
 
     <script>
-        // Обработка изменения количества
+          // Обработка изменения количества
         document.querySelectorAll('.quantity-btn').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const dishId = this.getAttribute('data-id');
+            btn.addEventListener('click', async function(event) {
+                event.preventDefault(); // Предотвращаем стандартное поведение формы
+                const dishId = this.closest('form').querySelector('input[name="dishId"]').value;
                 const isPlus = this.classList.contains('plus');
-                const quantityElement = this.parentElement.querySelector('.quantity-value');
+                const quantityElement = this.closest('.quantity-control').querySelector('.quantity-value');
                 let quantity = parseInt(quantityElement.textContent);
                 
                 if (isPlus) {
@@ -121,17 +122,16 @@
                         },
                         body: JSON.stringify({
                             dishId: dishId,
-                            quantity: quantity
-                        })
+                            action: isPlus ? 'increase' : 'decrease'
+                        }),
+                        credentials: 'include' // Включаем куки для сессии
                     });
                     
                     if (response.ok) {
                         const result = await response.json();
                         quantityElement.textContent = result.newQuantity;
-                        
                         // Обновляем общую сумму
                         document.querySelector('.total-price').textContent = `Итого: ${result.newTotalPrice} ₽`;
-                        
                         // Обновляем сумму для конкретного товара
                         const itemTotal = this.closest('.cart-item').querySelector('.item-total');
                         itemTotal.textContent = `${result.itemTotal} ₽`;
@@ -141,6 +141,51 @@
                 }
             });
         });
+
+        // Обработчик удаления из корзины
+        document.querySelectorAll('.remove-form').forEach(form => {
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault(); // Предотвращаем стандартное поведение формы
+                const dishId = this.querySelector('input[name="dishId"]').value;
+
+                try {
+                    const response = await fetch('/cart/remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ dishId }),
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        // Удаляем элемент из DOM
+                        this.closest('.cart-item').remove();
+                        // Обновляем счетчик корзины
+                        await updateCartCounter();
+                    } else {
+                        const error = await response.json();
+                        showNotification(error.message || 'Ошибка удаления');
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка соединения');
+                }
+            });
+        });
+
+        // Функция для обновления счетчика корзины
+        async function updateCartCounter() {
+            try {
+                const response = await fetch('/cart/count');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('cart-counter').textContent = data.count;
+                }
+            } catch (error) {
+                console.error('Ошибка обновления счетчика:', error);
+            }
+        }
     </script>
 </body>
 </html>

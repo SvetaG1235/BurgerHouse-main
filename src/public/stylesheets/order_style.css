@@ -5,7 +5,6 @@
     --price-color: rgb(205, 180, 130);
 }
 
-
 body {
     margin: 0;
     padding: 0;
@@ -15,20 +14,19 @@ body {
     color: var(--white);
 }
 
-
 .main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 1000px;
     padding: 20px;
 }
-
 
 .maintext h1 {
     color: var(--yellow);
     margin-bottom: 20px;
+    text-align: center; /* Центрируем заголовок */
 }
-
 
 .order-container {
     padding: 20px;
@@ -39,7 +37,6 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
-
 
 .order-items {
     margin-bottom: 30px;
@@ -52,8 +49,12 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.order-item:last-child {
+    border-bottom: none; /* Убираем нижнюю границу у последнего элемента */
+}
+
 .order-total {
-    font-size: 1.2em;
+    font-size: 1.5em; /* Увеличиваем размер шрифта для общей суммы */
     font-weight: bold;
     text-align: right;
     margin: 20px 0;
@@ -76,4 +77,32 @@ body {
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd}
+    border: 1px solid #ddd;
+    border-radius: 4px; /* Закругленные углы для полей ввода */
+    background-color: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
+    color: var(--white);
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+    border-color: var(--yellow); /* Цвет рамки при фокусе */
+    outline: none; /* Убираем стандартный контур */
+}
+
+.checkout-btn {
+    display: block; /* Кнопка занимает всю ширину */
+    width: 100%; /* Ширина кнопки */
+    padding: 15px; /* Отступы внутри кнопки */
+    background-color: var(--yellow); /* Цвет кнопки */
+    color: var(--main-color); /* Цвет текста кнопки */
+    border: none; /* Убираем границы */
+    border-radius: 5px; /* Закругленные углы */
+    font-size: 1.2em; /* Размер шрифта */
+    cursor: pointer; /* Курсор при наведении */
+    transition: background-color 0.3s; /* Плавный переход цвета */
+    margin-top: 20px; /* Отступ сверху */
+}
+
+.checkout-btn:hover {
+    background-color: #ffd700; /* Цвет кнопки при наведении */
+}

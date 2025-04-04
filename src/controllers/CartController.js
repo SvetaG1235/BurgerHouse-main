@@ -19,6 +19,7 @@ class CartController {
             });
         }
     }
+
     async showCart(req, res) {
         try {
             const cartItems = await CartService.getFullCartData();
@@ -42,10 +43,10 @@ class CartController {
         try {
             const { dishId } = req.body;
             await CartService.removeFromCart(dishId);
-            res.redirect('/cart');
+            res.json({ success: true }); // Возвращаем успешный ответ
         } catch (error) {
             console.error('Ошибка удаления:', error);
-            res.redirect(`/cart?error=${encodeURIComponent(error.message)}`);
+            res.status(400).json({ error: error.message });
         }
     }
 
@@ -58,7 +59,7 @@ class CartController {
             
             if (action === 'increase') {
                 item.quantity += 1;
-            } else if (action === 'decrease') {
+ } else if (action === 'decrease') {
                 item.quantity = Math.max(item.quantity - 1, 1);
             }
             
@@ -66,10 +67,12 @@ class CartController {
             
             // Возвращаем обновленные данные
             const cartCount = await CartService.getCartCount();
+            const newTotalPrice = await CartService.getTotalPrice(await CartService.getFullCartData());
             res.json({
                 success: true,
                 newQuantity: item.quantity,
-                cartCount: cartCount
+                newTotalPrice: newTotalPrice,
+                itemTotal: item.quantity * (await Dish.findByPk(dishId)).price // Обновляем сумму для конкретного товара
             });
         } catch (error) {
             res.status(400).json({ 

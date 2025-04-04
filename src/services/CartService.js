@@ -4,9 +4,6 @@ import Dish from '../models/DishModel.js';
 class CartService {
     static async addToCart(dishId, quantity = 1) {
         try {
-            // Простейшая проверка
-            console.log(`Попытка добавить dishId: ${dishId}, quantity: ${quantity}`);
-            
             const existingItem = await Cart.findOne({ where: { dishId } });
             
             if (existingItem) {
@@ -39,12 +36,12 @@ class CartService {
                     dishId: item.dishId,
                     name: dish.name,
                     price: dish.price,
-                    quantity: item.quantity,  // Добавляем количество
+                    quantity: item.quantity,
                     total: dish.price * item.quantity
                 };
             });
         } catch (error) {
-            console.error('Error getting cart data:', error);
+            console.error('Ошибка получения данных корзины:', error);
             throw error;
         }
     }
@@ -62,19 +59,6 @@ class CartService {
     static async getCartCount() {
         const cartItems = await Cart.findAll();
         return cartItems.reduce((total, item) => total + item.quantity, 0);
-    }
-
-    static async updateQuantity(dishId, newQuantity) {
-        const item = await Cart.findOne({ where: { dishId } });
-        if (!item) throw new Error('Товар не найден в корзине');
-        
-        item.quantity = newQuantity;
-        await item.save();
-        return item;
-    }
-
-    static async clearCart() {
-        req.session.cart = [];
     }
 }
 
